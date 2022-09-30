@@ -14,17 +14,20 @@ public class AutonomousRed extends LinearOpMode {
     @Override
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
-        detector = new SignalDetector(hardwareMap, lower, upper);
+        detector = new SignalDetector(hardwareMap);
+        detector.initialize();
         while (!isStarted() && !isStopRequested()) {
-            if (detector.caseDetected() == caseDetected) {
+            if (detector.getCaseDetected() == caseDetected) {
                 caseDetectionLength++;
-            } else {
-                caseDetected = detector.caseDetected();
+            } else if (detector.getCaseDetected() > 0) {
+                caseDetected = detector.getCaseDetected();
                 caseDetectionLength = 1;
             }
             if (caseDetectionLength >= caseDetectionThreshold) {
                 runCase = caseDetected;
             }
+            telemetry.addData("Case Detected", caseDetected);
+            telemetry.update();
         }
         detector.end();
         ValueStorage.redMultiplier = 1;
