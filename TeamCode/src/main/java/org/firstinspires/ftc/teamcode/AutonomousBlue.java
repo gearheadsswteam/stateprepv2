@@ -15,7 +15,7 @@ public class AutonomousBlue extends LinearOpMode {
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
         detector = new SignalDetector(hardwareMap);
-        detector.initialize();
+        detector.init();
         while (!isStarted() && !isStopRequested()) {
             if (detector.getCaseDetected() == caseDetected) {
                 caseDetectionLength++;

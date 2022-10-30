@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@TeleOp(name = "ScanServo", group = "TeleOp")
-public class ScanServo extends LinearOpMode {
+@TeleOp(name = "ServoTest", group = "TeleOp")
+public class ServoTest extends LinearOpMode {
     Servo test;
     double pos = 0.5;
     boolean aPressed = false;

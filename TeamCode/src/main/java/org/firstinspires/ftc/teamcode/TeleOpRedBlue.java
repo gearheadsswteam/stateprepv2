@@ -33,6 +33,8 @@ public class TeleOpRedBlue extends LinearOpMode {
     boolean xReleased = false;
     boolean yPressed = false;
     boolean yReleased = false;
+    boolean lbPressed = false;
+    boolean lbReleased = false;
     boolean rbPressed = false;
     boolean rbReleased = false;
     ElapsedTime stateTimer = new ElapsedTime();
@@ -83,6 +85,13 @@ public class TeleOpRedBlue extends LinearOpMode {
             } else {
                 yPressed = false;
                 yReleased = true;
+            }
+            if (gamepad1.left_bumper) {
+                lbPressed = lbReleased;
+                lbReleased = false;
+            } else {
+                lbPressed = false;
+                lbReleased = true;
             }
             if (gamepad1.right_bumper) {
                 rbPressed = rbReleased;

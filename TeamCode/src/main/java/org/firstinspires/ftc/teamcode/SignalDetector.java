@@ -14,7 +14,7 @@ public class SignalDetector {
         this.camera = OpenCvCameraFactory.getInstance().createWebcam(name, id);
         this.pipeline = new SignalDetectorPipeline();
     }
-    public void initialize() {
+    public void init() {
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
