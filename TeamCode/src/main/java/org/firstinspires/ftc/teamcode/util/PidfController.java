@@ -19,6 +19,11 @@ public abstract class PidfController {
     public void reset() {
         i = 0;
     }
+    public void setConstants(double kpNew, double kiNew, double kdNew) {
+        kp = kpNew;
+        ki = kiNew;
+        kd = kdNew;
+    }
     public void set(double newSetPoint) {
         setPoint = newSetPoint;
     }

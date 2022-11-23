@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.*;
+import static org.firstinspires.ftc.teamcode.ValueStorage.*;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "ServoTest", group = "TeleOp")
 public class ServoTest extends LinearOpMode {
-    Servo test;
-    double pos = 0.5;
+    Servo armL;
+    Servo armR;
+    Servo wristL;
+    Servo wristR;
+    double armPos = armRest;
+    double wristPos = wristRest;
     boolean aPressed = false;
     boolean bPressed = false;
     boolean aReleased = true;
@@ -17,7 +22,10 @@ public class ServoTest extends LinearOpMode {
     boolean yReleased = false;
     @Override
     public void runOpMode() {
-        test = hardwareMap.get(Servo.class, "wristR");
+        armL = hardwareMap.get(Servo.class, "armL");
+        armR = hardwareMap.get(Servo.class, "armR");
+        wristL = hardwareMap.get(Servo.class, "wristL");
+        wristR = hardwareMap.get(Servo.class, "wristR");
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             if (gamepad1.a) {
@@ -48,17 +56,33 @@ public class ServoTest extends LinearOpMode {
                 yPressed = false;
                 yReleased = true;
             }
-            if (aPressed) {
-                pos = min(1, pos + 0.1);
-            } else if (xPressed) {
-                pos = min(1, pos + 0.01);
-            } else if (bPressed) {
-                pos = max(0, pos - 0.1);
-            } else if (yPressed) {
-                pos = max(0, pos - 0.01);
+            if (gamepad1.right_bumper) {
+                if (aPressed) {
+                    wristPos = min(1, wristPos + 0.1);
+                } else if (xPressed) {
+                    wristPos = min(1, wristPos + 0.01);
+                } else if (bPressed) {
+                    wristPos = max(0, wristPos - 0.1);
+                } else if (yPressed) {
+                    wristPos = max(0, wristPos - 0.01);
+                }
+            } else {
+                if (aPressed) {
+                    armPos = min(1, armPos + 0.1);
+                } else if (xPressed) {
+                    armPos = min(1, armPos + 0.01);
+                } else if (bPressed) {
+                    armPos = max(0, armPos - 0.1);
+                } else if (yPressed) {
+                    armPos = max(0, armPos - 0.01);
+                }
             }
-            test.setPosition(pos);
-            telemetry.addData("Position", pos);
+            armL.setPosition(armPos);
+            armR.setPosition(armOffset - armPos);
+            wristL.setPosition(wristPos);
+            wristR.setPosition(wristOffset - wristPos);
+            telemetry.addData("Arm Position", armPos);
+            telemetry.addData("Wrist Position", wristPos);
             telemetry.update();
         }
     }

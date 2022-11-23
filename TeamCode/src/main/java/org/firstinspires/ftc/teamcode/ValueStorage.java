@@ -9,14 +9,14 @@ public class ValueStorage {
     public static double rollerRetract = 0.25;
     public static double gripperHold = 0.46;
     public static double gripperRelease = 0.70;
-    public static double armRest;
+    public static double armRest = 0.13;
     public static double armUp;
     public static double armDown;
     public static double wristRest = 0.73;
     public static double wristUp;
     public static double wristDown;
-    public static double armOffset;
-    public static double wristOffset;
+    public static double armOffset = 0.98;
+    public static double wristOffset = 1.01;
     public static double liftKp = 0.01;
     public static double liftKi = 0;
     public static double liftKd = 0;
