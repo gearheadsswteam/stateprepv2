@@ -3,7 +3,6 @@ import static java.lang.Math.*;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "ServoTest", group = "TeleOp")
 public class ServoTest extends LinearOpMode {
     Servo test;
@@ -18,7 +17,7 @@ public class ServoTest extends LinearOpMode {
     boolean yReleased = false;
     @Override
     public void runOpMode() {
-        test = hardwareMap.get(Servo.class, "test");
+        test = hardwareMap.get(Servo.class, "wristR");
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             if (gamepad1.a) {
