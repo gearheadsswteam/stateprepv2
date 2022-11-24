@@ -10,22 +10,27 @@ public class ServoTest extends LinearOpMode {
     Servo armR;
     Servo wristL;
     Servo wristR;
+    Servo gripper;
     double armPos = armRest;
     double wristPos = wristRest;
+    double gripperPos = gripperRelease;
     boolean aPressed = false;
-    boolean bPressed = false;
     boolean aReleased = true;
+    boolean bPressed = false;
     boolean bReleased = true;
     boolean xPressed = false;
-    boolean xReleased = false;
+    boolean xReleased = true;
     boolean yPressed = false;
-    boolean yReleased = false;
+    boolean yReleased = true;
+    boolean lbPressed = false;
+    boolean lbReleased = true;
     @Override
     public void runOpMode() {
         armL = hardwareMap.get(Servo.class, "armL");
         armR = hardwareMap.get(Servo.class, "armR");
         wristL = hardwareMap.get(Servo.class, "wristL");
         wristR = hardwareMap.get(Servo.class, "wristR");
+        gripper = hardwareMap.get(Servo.class, "gripper");
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             if (gamepad1.a) {
@@ -56,6 +61,13 @@ public class ServoTest extends LinearOpMode {
                 yPressed = false;
                 yReleased = true;
             }
+            if (gamepad1.left_bumper) {
+                lbPressed = lbReleased;
+                lbReleased = false;
+            } else {
+                lbPressed = false;
+                lbReleased = true;
+            }
             if (gamepad1.right_bumper) {
                 if (aPressed) {
                     wristPos = min(1, wristPos + 0.1);
@@ -77,10 +89,18 @@ public class ServoTest extends LinearOpMode {
                     armPos = max(0, armPos - 0.01);
                 }
             }
+            if (lbPressed) {
+                if (gripperPos == gripperRelease) {
+                    gripperPos = gripperHold;
+                } else {
+                    gripperPos = gripperRelease;
+                }
+            }
             armL.setPosition(armPos);
             armR.setPosition(armOffset - armPos);
             wristL.setPosition(wristPos);
             wristR.setPosition(wristOffset - wristPos);
+            gripper.setPosition(gripperPos);
             telemetry.addData("Arm Position", armPos);
             telemetry.addData("Wrist Position", wristPos);
             telemetry.update();
