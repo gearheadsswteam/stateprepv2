@@ -33,7 +33,7 @@ public abstract class PidfController {
     public void update(double input) {
         double dt = clock.seconds() - lastTime;
         e = setPoint - input;
-        i += (e + lastE) *  dt / 2;
+        i += (e + lastE) * dt / 2;
         d = (e - lastE) / dt;
         f = kf(input);
         lastTime += dt;
