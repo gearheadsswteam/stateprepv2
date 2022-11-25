@@ -20,8 +20,6 @@ import org.firstinspires.ftc.teamcode.util.PidfController;
 import org.firstinspires.ftc.teamcode.util.ProfileChain;
 import org.firstinspires.ftc.teamcode.util.TrapezoidalProfile;
 
-import java.util.ArrayList;
-
 @TeleOp(name = "TeleOpRedBlue", group = "TeleOp")
 public class TeleOpRedBlue extends LinearOpMode {
     DcMotorEx fl;
@@ -50,8 +48,6 @@ public class TeleOpRedBlue extends LinearOpMode {
     double moveAngle;
     double moveMagnitude;
     double turn;
-    double armPos = armRest;
-    double wristPos = wristRest;
     double switchTime = 0;
     double stateTime = 0;
     double time;
@@ -96,7 +92,7 @@ public class TeleOpRedBlue extends LinearOpMode {
         wristL = hardwareMap.get(Servo.class, "wristL");
         wristR = hardwareMap.get(Servo.class, "wristR");
         gyro = hardwareMap.get(BNO055IMU.class, "gyro");
-        //holder = hardwareMap.get(RevColorSensorV3.class, "holder");
+        holder = hardwareMap.get(RevColorSensorV3.class, "holder");
         fl.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
@@ -162,44 +158,44 @@ public class TeleOpRedBlue extends LinearOpMode {
             if (gamepad1.ps) {
                 initialHeading -= robotHeading;
             }
-            /* if (holder.getDistance(DistanceUnit.INCH) < holderDetectionThreshold) {
+            if (holder.getDistance(DistanceUnit.INCH) < holderDetectionThreshold) {
                 holderDetectionCount++;
             } else {
                 holderDetectionCount = 0;
-            } */
+            }
             time = clock.seconds();
             switch (state) {
                 case 0:
-                    if (time - switchTime < stateTime) {
+                    if (time < stateTime) {
                         if (time - switchTime > armProfile.getT()) {
                             gripper.setPosition(gripperRelease);
                         }
                     } else {
-                        if (gamepad1.right_trigger > 0.3) {
-                            intakeL.setPower(0);
-                            intakeR.setPower(0);
-                        } else if (gamepad1.right_trigger > 0.7) {
-                            intakeL.setPower(-0.5);
-                            intakeR.setPower(-0.5);
-                        } else {
+                        if (gamepad1.right_trigger < 0.3) {
                             intakeL.setPower(1);
                             intakeR.setPower(1);
+                        } else if (gamepad1.right_trigger < 0.7) {
+                            intakeL.setPower(0);
+                            intakeR.setPower(0);
+                        } else {
+                            intakeL.setPower(-0.5);
+                            intakeR.setPower(-0.5);
                         }
-                        if (gamepad1.left_trigger > 0.7) {
-                            roller.setPosition(rollerUp);
-                        } else if (gamepad1.left_trigger > 0.3) {
+                        if (gamepad1.left_trigger < 0.3) {
+                            roller.setPosition(rollerDown);
+                        } else if (gamepad1.left_trigger < 0.7) {
                             roller.setPosition((1.75 - 2.5 * gamepad1.left_trigger) * rollerDown + (2.5 * gamepad1.left_trigger - 0.75) * rollerUp);
                         } else {
-                            roller.setPosition(rollerDown);
+                            roller.setPosition(rollerUp);
                         }
-                        if (rbPressed || holderDetectionCount >= holderConfidence) {
+                        if (rbPressed || holderDetectionCount >= holderMinCount) {
                             state = 1;
                             stateDir = true;
                             intakeL.setPower(-0.5);
                             intakeR.setPower(-0.5);
-                            armProfile = forwardSafeArmPos1;
-                            wristProfile = forwardSafeWristPos1;
-                            stateTime = time + armProfile.getT();
+                            armProfile = forwardArmProfile1(time);
+                            wristProfile = forwardWristProfile1(time);
+                            stateTime = armProfile.getT();
                             switchTime = time;
                             gripper.setPosition(gripperHold);
                             roller.setPosition(rollerRetract);
@@ -215,69 +211,69 @@ public class TeleOpRedBlue extends LinearOpMode {
                     }
                     break;
                 case 1:
-                    if (time - switchTime < stateTime) {} else {
+                    if (time < stateTime) {} else {
                         intakeL.setPower(0);
                         intakeR.setPower(0);
                         if (aPressed) {
                             state = 2;
                             stateDir = true;
                             liftProfile = liftProfile.extendTrapezoidal(time, liftLow[0], 0);
-                            armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftLow[1], 0));
-                            wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftLow[2], 0));
+                            armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftLow[1], 0);
+                            wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftLow[2], 0);
                             stateTime = max(max(liftProfile.getT(), armProfile.getT()), wristProfile.getT());
                             switchTime = time;
                         } else if (bPressed) {
                             state = 2;
                             stateDir = true;
                             liftProfile = liftProfile.extendTrapezoidal(time, liftMed[0], 0);
-                            armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftMed[1], 0));
-                            wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftMed[2], 0));
+                            armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftMed[1], 0);
+                            wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftMed[2], 0);
                             stateTime = max(max(liftProfile.getT(), armProfile.getT()), wristProfile.getT());
                             switchTime = time;
                         } else if (yPressed) {
                             state = 2;
                             stateDir = true;
                             liftProfile = liftProfile.extendTrapezoidal(time, liftHigh[0], 0);
-                            armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftHigh[1], 0));
-                            wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftHigh[2], 0));
+                            armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftHigh[1], 0);
+                            wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftHigh[2], 0);
                             stateTime = max(max(liftProfile.getT(), armProfile.getT()), wristProfile.getT());
                             switchTime = time;
                         } else if (xPressed) {
                             state = 2;
                             stateDir = true;
                             liftProfile = liftProfile.extendTrapezoidal(time, liftGround[0], 0);
-                            armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftGround[1], 0));
-                            wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftGround[2], 0));
+                            armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftGround[1], 0);
+                            wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftGround[2], 0);
                             stateTime = max(max(liftProfile.getT(), armProfile.getT()), wristProfile.getT());
                             switchTime = time;
                         } else if (lbPressed) {
                             state = 0;
                             stateDir = false;
-                            armProfile = backSafeArmPos1;
-                            wristProfile = backSafeWristPos1;
-                            stateTime = time + armProfile.getT() + 0.25;
+                            armProfile = backArmProfile1(time);
+                            wristProfile = backWristProfile1(time);
+                            stateTime = armProfile.getT() + 0.25;
                             switchTime = time;
                             roller.setPosition(rollerDown);
                         }
                     }
                     break;
                 case 2:
-                    if (time - switchTime < stateTime) {} else if (aPressed) {
+                    if (time < stateTime) {} else if (aPressed) {
                         liftProfile = liftProfile.extendTrapezoidal(time, liftLow[0], 0);
-                        armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftLow[1], 0));
-                        wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftLow[2], 0));
+                        armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftLow[1], 0);
+                        wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftLow[2], 0);
                     } else if (bPressed) {
                         liftProfile = liftProfile.extendTrapezoidal(time, liftMed[0], 0);
-                        armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftMed[1], 0));
-                        wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftMed[2], 0));
+                        armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftMed[1], 0);
+                        wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftMed[2], 0);
                     } else if (yPressed) {
                         liftProfile = liftProfile.extendTrapezoidal(time, liftHigh[0], 0);
-                        armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftHigh[1], 0));
-                        wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftHigh[2], 0));
+                        armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftHigh[1], 0);
+                        wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftHigh[2], 0);
                     } else if (xPressed) {
                         liftProfile = liftProfile.extendTrapezoidal(time, liftGround[0], 0);
-                        armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftGround[1], 0));
-                        wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftGround[2], 0));
+                        armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, liftGround[1], 0);
+                        wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, liftGround[2], 0);
                     } else if (rbPressed) {
                         state = 3;
                         stateDir = true;
@@ -287,12 +283,12 @@ public class TeleOpRedBlue extends LinearOpMode {
                     }
                     break;
                 case 3:
-                    if (time - switchTime < stateTime) {} else if (rbPressed) {
+                    if (time < stateTime) {} else if (rbPressed) {
                         state = 4;
                         stateDir = true;
                         liftProfile = liftProfile.extendTrapezoidal(time, 0, 0);
-                        armProfile = new ProfileChain().add(armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, armIn, 0));
-                        wristProfile = new ProfileChain().add(wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, wristIn, 0));
+                        armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, time, armIn, 0);
+                        wristProfile = wristProfile.extendTrapezoidal(wristMaxVel, wristMaxAccel, time, wristIn, 0);
                         stateTime = max(max(liftProfile.getT(), armProfile.getT()), wristProfile.getT());
                         switchTime = time;
                     } else if (lbPressed) {
@@ -304,14 +300,14 @@ public class TeleOpRedBlue extends LinearOpMode {
                     }
                     break;
                 case 4:
-                    if (time - switchTime < stateTime) {} else if (rbPressed) {
+                    if (time < stateTime) {} else if (rbPressed) {
                         state = 0;
                         if (stateDir) {
-                            armProfile = forwardSafeArmPos2;
-                            wristProfile = forwardSafeWristPos2;
-                            stateTime = time + armProfile.getT() + 0.25;
+                            armProfile = forwardArmProfile2(time);
+                            wristProfile = forwardWristProfile2(time);
+                            stateTime = armProfile.getT() + 0.25;
                         } else {
-                            stateTime = 0;
+                            stateTime = time;
                         }
                         switchTime = time;
                         stateDir = true;
@@ -323,10 +319,10 @@ public class TeleOpRedBlue extends LinearOpMode {
             liftPidf.update(liftL.getCurrentPosition());
             liftL.setPower(liftPidf.get());
             liftR.setPower(liftPidf.get());
-            armL.setPosition(armPos);
-            armR.setPosition(armOffset - armPos);
-            wristL.setPosition(wristPos);
-            wristR.setPosition(wristOffset - wristPos);
+            armL.setPosition(armProfile.getX(time));
+            armR.setPosition(armOffset - armProfile.getX(time));
+            wristL.setPosition(wristProfile.getX(time));
+            wristR.setPosition(wristOffset - wristProfile.getX(time));
             robotHeading = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle + initialHeading;
             moveAngle = atan2(-gamepad1.left_stick_x, -gamepad1.left_stick_y) - robotHeading;
             moveMagnitude = abs(pow(gamepad1.left_stick_x, 3)) + abs(pow(gamepad1.left_stick_y, 3));

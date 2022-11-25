@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import static java.lang.Math.*;
 import static org.firstinspires.ftc.teamcode.ValueStorage.*;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -23,8 +22,10 @@ public class ServoTest extends LinearOpMode {
     boolean yReleased = true;
     boolean lbPressed = false;
     boolean lbReleased = true;
+    boolean up = false;
     boolean started = false;
     double time;
+    double startTime;
     ElapsedTime clock = new ElapsedTime();
     MultipleTelemetry multipleTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     @Override
@@ -33,6 +34,10 @@ public class ServoTest extends LinearOpMode {
         armR = hardwareMap.get(Servo.class, "armR");
         wristL = hardwareMap.get(Servo.class, "wristL");
         wristR = hardwareMap.get(Servo.class, "wristR");
+        armL.setPosition(armRest);
+        armR.setPosition(armOffset - armRest);
+        wristL.setPosition(wristRest);
+        wristR.setPosition(wristOffset - wristRest);
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             if (gamepad1.a) {
@@ -71,19 +76,26 @@ public class ServoTest extends LinearOpMode {
                 lbReleased = true;
             }
             time = clock.seconds();
-            if (started) {
-                armL.setPosition(forwardSafeArmPos1.getX(time));
-                armR.setPosition(armOffset - forwardSafeArmPos1.getX(time));
-                wristL.setPosition(forwardSafeWristPos1.getX(time));
-                wristR.setPosition(wristOffset - forwardSafeWristPos1.getX(time));
+            if (up) {
+                armL.setPosition(forwardArmProfile1(startTime).getX(time));
+                armR.setPosition(armOffset - forwardArmProfile1(startTime).getX(time));
+                wristL.setPosition(forwardWristProfile1(startTime).getX(time));
+                wristR.setPosition(wristOffset - forwardWristProfile1(startTime).getX(time));
+                if (aPressed && time > forwardArmProfile1(startTime).getT()) {
+                    up = false;
+                    startTime = time;
+                }
             } else {
-                armL.setPosition(armRest);
-                armR.setPosition(armOffset - armRest);
-                wristL.setPosition(wristRest);
-                wristR.setPosition(wristOffset - wristRest);
-                if (aPressed) {
+                if (started) {
+                    armL.setPosition(backArmProfile1(startTime).getX(time));
+                    armR.setPosition(armOffset - backArmProfile1(startTime).getX(time));
+                    wristL.setPosition(backWristProfile1(startTime).getX(time));
+                    wristR.setPosition(wristOffset - backWristProfile1(startTime).getX(time));
+                }
+                if (aPressed && time > backArmProfile1(startTime).getT()) {
+                    up = true;
                     started = true;
-                    clock.reset();
+                    startTime = time;
                 }
             }
             multipleTelemetry.addData("Arm Position", armL.getPosition());

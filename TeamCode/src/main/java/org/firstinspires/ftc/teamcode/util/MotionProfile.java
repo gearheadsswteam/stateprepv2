@@ -22,6 +22,6 @@ public abstract class MotionProfile {
         return new DelayProfile(t, getX(t), getV(t), tFinal);
     }
     public DelayProfile extendDelay(double tFinal) {
-        return new DelayProfile(tf, xf, vf, tFinal);
+        return extendDelay(tf, tFinal);
     }
 }

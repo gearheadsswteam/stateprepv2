@@ -57,6 +57,9 @@ public class ProfileChain extends MotionProfile {
             }
         }
         profiles.add(newProfile);
+        tf = newProfile.tf;
+        xf = newProfile.xf;
+        vf = newProfile.vf;
         return new ProfileChain(profiles);
     }
     public ProfileChain add(ProfileChain newProfiles) {
@@ -70,6 +73,9 @@ public class ProfileChain extends MotionProfile {
             }
         }
         profiles.addAll(newProfiles.getProfiles());
+        tf = newProfiles.tf;
+        xf = newProfiles.xf;
+        vf = newProfiles.vf;
         return new ProfileChain(profiles);
     }
     public ProfileChain addExtendTrapezoidal(double vm, double am, double xf, double vf) {
