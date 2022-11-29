@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.classes;
 public class DelayProfile extends MotionProfile {
     public DelayProfile(double ti, double xi, double vi, double tf) {
         this.ti = ti;

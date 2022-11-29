@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.classes;
 
 public abstract class MotionProfile {
     double xi;

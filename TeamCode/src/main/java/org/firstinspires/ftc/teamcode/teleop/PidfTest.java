@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleop;
 import static java.lang.Math.*;
-import static org.firstinspires.ftc.teamcode.ValueStorage.*;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.MotionProfile;
-import org.firstinspires.ftc.teamcode.util.PidfController;
-import org.firstinspires.ftc.teamcode.util.TrapezoidalProfile;
+import org.firstinspires.ftc.teamcode.classes.PidfController;
+import org.firstinspires.ftc.teamcode.classes.TrapezoidalProfile;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -17,13 +16,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 @TeleOp (name = "PidfTest", group = "TeleOp")
 public class PidfTest extends LinearOpMode {
-    public static double KP = 0.05;
-    public static double KI = 0;
-    public static double KD = 0;
-    public static double A_MAX = 5000;
-    public static double V_MAX = 1000;
+    public static double KP = liftKp;
+    public static double KI = liftKi;
+    public static double KD = liftKd;
+    public static double A_MAX = liftMaxAccel;
+    public static double V_MAX = liftMaxVel;
     double kfTest(double input) {
-        return 0.0003 * input;
+        return liftKf(input);
     }
     DcMotorEx test1;
     DcMotorEx test2;
@@ -52,8 +51,8 @@ public class PidfTest extends LinearOpMode {
         test1 = hardwareMap.get(DcMotorEx.class, "liftL");
         test2 = hardwareMap.get(DcMotorEx.class, "liftR");
         test2.setDirection(DcMotorSimple.Direction.REVERSE);
-        test1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        test1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        test1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        test1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         test1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         test1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
@@ -89,13 +88,13 @@ public class PidfTest extends LinearOpMode {
             time = clock.seconds();
             pos = test1.getCurrentPosition();
             if (aPressed) {
-                currentProfile = currentProfile.extendTrapezoidal(time, min(1100, currentProfile.getX(time) + 500), 0);
+                currentProfile = currentProfile.extendTrapezoidal(V_MAX, A_MAX, time, min(1100, currentProfile.getX(time) + 500), 0);
             } else if (yPressed) {
-                currentProfile = currentProfile.extendTrapezoidal(time, min(1100, currentProfile.getX(time) + 100), 0);
+                currentProfile = currentProfile.extendTrapezoidal(V_MAX, A_MAX, time, min(1100, currentProfile.getX(time) + 100), 0);
             } else if (bPressed) {
-                currentProfile = currentProfile.extendTrapezoidal(time, max(0, currentProfile.getX(time) - 500), 0);
+                currentProfile = currentProfile.extendTrapezoidal(V_MAX, A_MAX, time, max(0, currentProfile.getX(time) - 500), 0);
             } else if (xPressed) {
-                currentProfile = currentProfile.extendTrapezoidal(time, max(0, currentProfile.getX(time) - 100), 0);
+                currentProfile = currentProfile.extendTrapezoidal(V_MAX, A_MAX, time, max(0, currentProfile.getX(time) - 100), 0);
             }
             multipleTelemetry.addData("Position", pos);
             multipleTelemetry.addData("Velocity", (pos - lastPos[8][0]) / (time - lastPos[8][1]));

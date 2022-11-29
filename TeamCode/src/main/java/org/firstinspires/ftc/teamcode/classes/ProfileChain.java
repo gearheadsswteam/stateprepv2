@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.classes;
 import java.util.ArrayList;
 public class ProfileChain extends MotionProfile {
     ArrayList<MotionProfile> profiles = new ArrayList<>();

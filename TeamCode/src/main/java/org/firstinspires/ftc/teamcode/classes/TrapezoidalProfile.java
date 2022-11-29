@@ -1,29 +1,30 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.classes;
 import static java.lang.Math.*;
 public class TrapezoidalProfile extends MotionProfile {
     double am;
     double vm;
     boolean flat;
     public TrapezoidalProfile(double vm, double am, double ti, double xi, double vi, double xf, double vf) {
-        this.am = am;
         this.vm = vm;
         this.xi = xi;
         this.vi = vi;
         this.ti = ti;
         this.xf = xf;
         this.vf = vf;
-        if (abs(pow(vf, 2) - pow(vi, 2)) / (2 * am) > abs(xf - xi)) {
-            throw new java.lang.RuntimeException("ImpossibleProfileError");
-        }
         this.flat = 2 * pow(vm, 2) - pow(vi, 2) - pow(vf, 2) < 2 * am * abs(xf - xi);
-        if (xf > xi && flat) {
-            this.tf = ti + (xf - xi) / vm + (pow(vm - vi, 2) + pow(vm - vf, 2)) / (2 * am * vm);
-        } else if (xf > xi) {
-            this.tf = ti + (2 * sqrt(am * (xf - xi) + (pow(vi, 2) + pow(vm, 2))/ 2) - vi - vf) / am;
-        } else if (flat) {
-            this.tf = ti + (xi - xf) / vm + (pow(vm - vi, 2) + pow(vm - vf, 2)) / (2 * am * vm);
+        if (abs(pow(vf, 2) - pow(vi, 2)) > 2 * am * abs(xf - xi)) {
+            this.am = abs((pow(vf, 2) - pow(vi, 2)) / (2 * (xf - xi)));
         } else {
-            this.tf = ti + (2 * sqrt(am * (xi - xf) + (pow(vi, 2) + pow(vf, 2)) / 2) + vi + vf) / am;
+            this.am = am;
+        }
+        if (xf > xi && flat) {
+            this.tf = ti + (xf - xi) / vm + (pow(vm - vi, 2) + pow(vm - vf, 2)) / (2 * this.am * vm);
+        } else if (xf > xi) {
+            this.tf = ti + (2 * sqrt(am * (xf - xi) + (pow(vi, 2) + pow(vf, 2))/ 2) - vi - vf) / this.am;
+        } else if (flat) {
+            this.tf = ti + (xi - xf) / vm + (pow(vm + vi, 2) + pow(vm + vf, 2)) / (2 * this.am * vm);
+        } else {
+            this.tf = ti + (2 * sqrt(am * (xi - xf) + (pow(vi, 2) + pow(vf, 2)) / 2) + vi + vf) / this.am;
         }
     }
     public double getX(double t) {
@@ -39,10 +40,10 @@ public class TrapezoidalProfile extends MotionProfile {
                     return xf - vf * (tf - t) - am * pow(tf - t, 2) / 2;
                 }
             } else if (xf > xi) {
-                if (t < (tf + ti) / 2 - vi / (2 * am)) {
+                if (t < (tf + ti) / 2 + (vf - vi) / (2 * am)) {
                     return xi + vi * (t - ti) + am * pow(t - ti, 2) / 2;
                 } else {
-                    return xf - vf * (tf - t) * am * pow(tf - t, 2) / 2;
+                    return xf - vf * (tf - t) - am * pow(tf - t, 2) / 2;
                 }
             } else if (flat) {
                 if (t < ti + (vm + vi) / am) {
@@ -53,7 +54,7 @@ public class TrapezoidalProfile extends MotionProfile {
                     return xf - vf * (tf - t) + am * pow(tf - t, 2) / 2;
                 }
             } else {
-                if (t < (tf + ti) / 2 + vi / (2 * am)) {
+                if (t < (tf + ti) / 2 + (vi - vf)/ (2 * am)) {
                     return xi + vi * (t - ti) - am * pow(t - ti, 2) / 2;
                 } else {
                     return xf - vf * (tf - t) + am * pow(tf - t, 2) / 2;
@@ -73,7 +74,7 @@ public class TrapezoidalProfile extends MotionProfile {
                 } else if (t < tf - vm / am) {
                     return vm;
                 } else {
-                    return vf + (tf - t) * am;
+                    return vf + am * (tf - t);
                 }
             } else if (xf > xi) {
                 if (t < (tf + ti) / 2 + (vf - vi) / (2 * am)) {
