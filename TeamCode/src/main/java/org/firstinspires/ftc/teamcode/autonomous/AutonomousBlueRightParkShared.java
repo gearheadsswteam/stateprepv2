@@ -3,12 +3,13 @@ import static java.lang.Math.*;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.*;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.profile.VelocityConstraint;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.classes.Robot;
 import org.firstinspires.ftc.teamcode.classes.SignalDetector;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -26,9 +27,10 @@ public class AutonomousBlueRightParkShared extends LinearOpMode {
     TrajectorySequence traj1;
     TrajectorySequence[] traj2;
     boolean startTraj1 = true;
-    boolean startTraj2 = false;
+    double traj1Time;
     boolean startLift = false;
     boolean endTraj1 = false;
+    boolean traj1Done = false;
     boolean endTraj2 = false;
     boolean done = false;
     ElapsedTime clock = new ElapsedTime();
@@ -40,16 +42,17 @@ public class AutonomousBlueRightParkShared extends LinearOpMode {
         //detector.init();
         robot.drive.setPoseEstimate(initPose);
         traj1 = robot.drive.trajectorySequenceBuilder(initPose)
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(new Vector2d (-35, 30))
                 .splineTo(dropPose.vec(), dropPose.getHeading())
+                .resetVelConstraint()
                 .addTemporalMarker(1, -1.4, () -> {
                     startLift = true;
                 })
                 .addTemporalMarker(1, 0, () -> {
                     endTraj1 = true;
-                })
-                .addTemporalMarker(1, 0.5, () -> {
-                    startTraj2 = true;
+                    traj1Done = true;
+                    traj1Time = clock.seconds();
                 })
                 .build();
         traj2 = new TrajectorySequence[] {
@@ -107,12 +110,12 @@ public class AutonomousBlueRightParkShared extends LinearOpMode {
                 robot.gripper.setPosition(gripperRelease);
                 endTraj1 = false;
             }
-            if (startTraj2) {
+            if (traj1Done && time - traj1Time > 1) {
                 robot.drive.followTrajectorySequenceAsync(traj2[0]);
-                startTraj2 = false;
                 robot.extendLiftProfile(time, 0, 0);
                 robot.armProfile = forwardArmProfile2(time);
                 robot.wristProfile = forwardWristProfile2(time);
+                traj1Done = false;
             }
         }
         //lastPose = finalPose;
