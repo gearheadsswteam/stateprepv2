@@ -4,43 +4,44 @@ public class ProfileChain extends MotionProfile {
     ArrayList<MotionProfile> profiles = new ArrayList<>();
     public ProfileChain(ArrayList<MotionProfile> profiles) {
         for (int i = 0; i < profiles.size() - 1; i++) {
-            if (profiles.get(i).tf != profiles.get(i + 1).ti) {
-                throw new java.lang.RuntimeException("TimeContinuityError");
-            } else if (profiles.get(i).xf != profiles.get(i + 1).xi) {
+            if (profiles.get(i).getX(profiles.get(i + 1).getTi()) != profiles.get(i + 1).xi) {
                 throw new java.lang.RuntimeException("PositionContinuityError");
-            } else if (profiles.get(i).vf != profiles.get(i + 1).vi) {
+            } else if (profiles.get(i).getV(profiles.get(i + 1).getTi()) != profiles.get(i + 1).vi) {
                 throw new java.lang.RuntimeException("VelocityContinuityError");
             }
         }
         this.profiles = profiles;
-        this.tf = profiles.get(profiles.size() - 1).tf;
+        this.tf = profiles.get(profiles.size() - 1).getTf();
         this.xf = profiles.get(profiles.size() - 1).xf;
         this.vf = profiles.get(profiles.size() - 1).vf;
     }
+    public ProfileChain(MotionProfile profile) {
+        this.profiles.add(profile);
+        this.tf = profile.getTf();
+        this.xf = profile.xf;
+        this.vf = profile.vf;
+    }
     public ProfileChain() {}
     public double getX(double t) {
-        if (t < profiles.get(0).getT()) {
-            return profiles.get(0).getX(t);
-        }
-        for (int i = 1; i < profiles.size() - 1; i++) {
-            if (profiles.get(i - 1).getT() <= t && t < profiles.get(i).getT()) {
+        for (int i = 0; i < profiles.size() - 2; i++) {
+            if (t < profiles.get(i + 1).getTi()) {
                 return profiles.get(i).getX(t);
             }
         }
         return profiles.get(profiles.size() - 1).getX(t);
     }
     public double getV(double t) {
-        if (t < profiles.get(0).getT()) {
+        if (t < profiles.get(0).getTf()) {
             return profiles.get(0).getV(t);
         }
         for (int i = 1; i < profiles.size() - 1; i++) {
-            if (profiles.get(i - 1).getT() <= t && t < profiles.get(i).getT()) {
+            if (profiles.get(i - 1).getTf() <= t && t < profiles.get(i).getTf()) {
                 return profiles.get(i).getV(t);
             }
         }
         return profiles.get(profiles.size() - 1).getV(t);
     }
-    public double getT() {
+    public double getTf() {
         return tf;
     }
     public ArrayList<MotionProfile> getProfiles() {
@@ -48,11 +49,9 @@ public class ProfileChain extends MotionProfile {
     }
     public ProfileChain add(MotionProfile newProfile) {
         if (profiles.size() > 0) {
-            if (tf != newProfile.ti) {
-                throw new java.lang.RuntimeException("TimeContinuityError");
-            } else if (xf != newProfile.xi) {
+            if (getX(newProfile.ti) != newProfile.xi) {
                 throw new java.lang.RuntimeException("PositionContinuityError");
-            } else if (vf != newProfile.vi) {
+            } else if (getV(newProfile.ti) != newProfile.vi) {
                 throw new java.lang.RuntimeException("VelocityContinuityError");
             }
         }
@@ -64,11 +63,9 @@ public class ProfileChain extends MotionProfile {
     }
     public ProfileChain add(ProfileChain newProfiles) {
         if (profiles.size() > 0) {
-            if (tf != newProfiles.getProfiles().get(0).ti) {
-                throw new java.lang.RuntimeException("TimeContinuityError");
-            } else if (xf != newProfiles.getProfiles().get(0).xi) {
+            if (getX(newProfiles.getProfiles().get(0).ti) != newProfiles.getProfiles().get(0).xi) {
                 throw new java.lang.RuntimeException("PositionContinuityError");
-            } else if (vf != newProfiles.getProfiles().get(0).vi) {
+            } else if (getV(newProfiles.getProfiles().get(0).ti) != newProfiles.getProfiles().get(0).vi) {
                 throw new java.lang.RuntimeException("VelocityContinuityError");
             }
         }

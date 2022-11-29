@@ -9,14 +9,17 @@ public abstract class MotionProfile {
     double vf;
     public abstract double getX(double t);
     public abstract double getV(double t);
-    public double getT() {
+    public double getTf() {
         return tf;
+    }
+    public double getTi() {
+        return ti;
     }
     public TrapezoidalProfile extendTrapezoidal(double vm, double am, double t, double xf, double vf) {
         return new TrapezoidalProfile(vm, am, t, getX(t), getV(t), xf, vf);
     }
     public TrapezoidalProfile extendTrapezoidal(double vm, double am, double xf, double vf) {
-        return extendTrapezoidal(vm, am, getT(), xf, vf);
+        return extendTrapezoidal(vm, am, getTf(), xf, vf);
     }
     public DelayProfile extendDelay(double t, double tFinal) {
         return new DelayProfile(t, getX(t), getV(t), tFinal);

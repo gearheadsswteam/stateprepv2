@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.classes.ProfileChain;
 import org.firstinspires.ftc.teamcode.classes.Robot;
 import org.firstinspires.ftc.teamcode.classes.ValueStorage;
 @TeleOp(name = "TeleOpRedBlue")
@@ -13,7 +14,7 @@ public class TeleOpRedBlue extends LinearOpMode {
     Robot robot = new Robot();
     int state = 0;
     int holderDetectionCount = 0;
-    double initialHeading = ValueStorage.lastPose.getHeading() - redMultiplier * PI / 2;
+    double initialHeading = ValueStorage.lastPose.getHeading() - side * PI / 2;
     double robotHeading;
     double moveAngle;
     double moveMagnitude;
@@ -94,7 +95,7 @@ public class TeleOpRedBlue extends LinearOpMode {
             switch (state) {
                 case 0:
                     if (time < stateTime) {
-                        if (!stateDir && time > robot.armProfile.getT()) {
+                        if (!stateDir && time > robot.armProfile.getTf()) {
                             robot.gripper.setPosition(gripperRelease);
                         }
                     } else {
@@ -119,7 +120,7 @@ public class TeleOpRedBlue extends LinearOpMode {
                             robot.setIntakePowers(-0.5, -0.5);
                             robot.armProfile = forwardArmProfile1(time);
                             robot.wristProfile = forwardWristProfile1(time);
-                            stateTime = robot.armProfile.getT();
+                            stateTime = robot.armProfile.getTf();
                             switchTime = time;
                             robot.gripper.setPosition(gripperHold);
                             robot.roller.setPosition(rollerRetract);
@@ -176,7 +177,7 @@ public class TeleOpRedBlue extends LinearOpMode {
                             stateDir = false;
                             robot.armProfile = backArmProfile1(time);
                             robot.wristProfile = backWristProfile1(time);
-                            stateTime = robot.armProfile.getT() + 0.25;
+                            stateTime = robot.armProfile.getTf() + 0.25;
                             switchTime = time;
                             robot.roller.setPosition(rollerDown);
                         }
@@ -238,12 +239,26 @@ public class TeleOpRedBlue extends LinearOpMode {
                     }
                     break;
                 case 4:
-                    if (time < stateTime) {} else if (rbPressed) {
+                    if (time < stateTime) {
+                        if (rbPressed && stateDir) {
+                            state = 0;
+                            double downTime = robot.restTime();
+                            robot.armProfile = new ProfileChain().add(robot.armProfile)
+                                    .addExtendDelay(downTime)
+                                    .add(forwardArmProfile2(downTime));
+                            robot.wristProfile = new ProfileChain().add(robot.wristProfile)
+                                    .addExtendDelay(downTime)
+                                    .add(forwardWristProfile2(downTime));
+                            stateTime = robot.armProfile.getTf();
+                            switchTime = time;
+                            robot.roller.setPosition(rollerDown);
+                        }
+                    } else if (rbPressed) {
                         state = 0;
                         if (stateDir) {
                             robot.armProfile = forwardArmProfile2(time);
                             robot.wristProfile = forwardWristProfile2(time);
-                            stateTime = robot.armProfile.getT() + 0.25;
+                            stateTime = robot.armProfile.getTf();
                         } else {
                             stateTime = time;
                         }
@@ -256,7 +271,10 @@ public class TeleOpRedBlue extends LinearOpMode {
             robot.update(time);
             robotHeading = robot.getHeading() + initialHeading;
             moveAngle = atan2(-gamepad1.left_stick_x, -gamepad1.left_stick_y) - robotHeading;
-            moveMagnitude = min(abs(pow(gamepad1.left_stick_x, 3)) + abs(pow(gamepad1.left_stick_y, 3)), 0.01);
+            moveMagnitude = abs(pow(gamepad1.left_stick_x, 3)) + abs(pow(gamepad1.left_stick_y, 3));
+            if (moveMagnitude < 0.01) {
+                moveMagnitude = 0;
+            }
             turn = pow(gamepad1.right_stick_x, 3);
             robot.setDrivePowers(moveMagnitude * Range.clip(sin(PI / 4 - moveAngle) / abs(cos(PI / 4 - moveAngle)), -1, 1) + turn, 
                     moveMagnitude * Range.clip(sin(PI / 4 + moveAngle) / abs(cos(PI / 4 + moveAngle)), -1, 1) - turn, 
