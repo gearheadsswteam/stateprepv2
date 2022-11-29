@@ -67,7 +67,7 @@ public class ValueStorage {
     }
     public static ProfileChain autonomousWristProfile(double t) {
         return new ProfileChain()
-                .add(new TrapezoidalProfile(wristMaxVel, wristMaxAccel, t + 0.5, wristIn, 0, wristUp, 0));
+                .add(new TrapezoidalProfile(wristMaxVel, wristMaxAccel, t + 1, wristIn, 0, wristUp, 0));
     }
     public static double[] liftLowClose = {150, armUp, wristUp};
     public static double[] liftMedClose = {600, armUp, wristUp};
