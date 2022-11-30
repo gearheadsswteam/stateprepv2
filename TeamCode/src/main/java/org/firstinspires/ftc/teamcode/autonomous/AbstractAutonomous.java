@@ -17,15 +17,14 @@ public abstract class AbstractAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot.init(hardwareMap, armIn, wristIn, gripperHold);
-        //detector = new SignalDetector(hardwareMap);
-        //detector.init();
+        detector = new SignalDetector(hardwareMap);
+        detector.init();
         robot.drive.setPoseEstimate(initPose());
         initialize();
         robot.liftL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (!isStarted() && !isStopRequested()) {
             time = clock.seconds();
-            /*
             if (detector.getCaseDetected() == caseDetected) {
                 caseDetectionLength++;
             } else if (detector.getCaseDetected() > 0) {
@@ -36,11 +35,10 @@ public abstract class AbstractAutonomous extends LinearOpMode {
                 runCase = caseDetected;
             }
             robot.update(time);
-             */
             telemetry.addData("Case Detected", caseDetected);
             telemetry.update();
         }
-        //detector.end();
+        detector.end();
         side = side();
         run();
         lastPose = robot.drive.getPoseEstimate();

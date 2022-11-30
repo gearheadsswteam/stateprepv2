@@ -40,6 +40,7 @@ public class SignalDetectorPipeline extends OpenCvPipeline {
             }
             Imgproc.rectangle(output, maxRect, new Scalar(255, 255, 255));
             Imgproc.putText(output, "Color "+ (i + 1) + " Area: " + maxRect.area(), new Point(10, 20 + 15 * i), 0, 0.5, new Scalar(0, 0, 255), 1);
+
         }
         caseDetected = maxColor[1] + 1;
         if (caseDetected == 0) {
@@ -47,7 +48,9 @@ public class SignalDetectorPipeline extends OpenCvPipeline {
         } else {
             Imgproc.putText(output, "Case: " + caseDetected, new Point(10, 350), 0, 0.5, new Scalar(0, 0, 255), 1);
         }
-        return output;
+        process.release();
+        output.release();
+        return input;
     }
     public int getCaseDetected() {
         return caseDetected;
