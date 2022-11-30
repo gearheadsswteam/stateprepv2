@@ -63,7 +63,7 @@ public class ValueStorage {
     }
     public static double[] liftLowClose = {150, armUp, wristUp};
     public static double[] liftMedClose = {550, armUp, wristUp};
-    public static double[] liftHighClose = {1000, armUp, wristUp};
+    public static double[] liftHighClose = {975, armUp, wristUp};
     public static double[] liftHighFar = {1050, 0.70, wristUp};
     public static double[] liftGroundClose = {0, 0.97, 0.30};
     public static int side = sides.RED;
