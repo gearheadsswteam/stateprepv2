@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "AutonomousBlueLeftParkSpecific", group = "BlueLeft")
 public class AutonomousBlueLeftParkSpecific extends AbstractAutonomous {
-    Pose2d dropPose = new Pose2d(20, 33, -2.7);
-    Pose2d[] parkPose = new Pose2d[] {new Pose2d(11, 34, PI), new Pose2d(35, 34, PI), new Pose2d(59, 34, PI)};
+    Pose2d dropPose = new Pose2d(20, 33, -2.65);
+    Pose2d[] parkPose = new Pose2d[] {new Pose2d(59, 34, PI), new Pose2d(35, 34, PI), new Pose2d(11, 34, PI)};
     TrajectorySequence traj1;
     TrajectorySequence[] traj2;
     ElapsedTime clock = new ElapsedTime();
