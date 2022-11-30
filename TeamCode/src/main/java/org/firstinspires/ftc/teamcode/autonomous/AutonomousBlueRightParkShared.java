@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "AutonomousBlueRightParkShared", group = "BlueRight")
 public class AutonomousBlueRightParkShared extends AbstractAutonomous {
     Pose2d dropPose = new Pose2d(-33, 19, -1.1);
-    Pose2d[] parkPose = new Pose2d[] {new Pose2d(-12, 32, -PI / 2), new Pose2d(-35, 32, -PI / 2), new Pose2d(-57, 32, -PI / 2)};
+    Pose2d[] parkPose = new Pose2d[] {new Pose2d(-11, 34, -PI / 2), new Pose2d(-35, 34, -PI / 2), new Pose2d(-59, 34, -PI / 2)};
     TrajectorySequence traj1;
     TrajectorySequence[] traj2;
     ElapsedTime clock = new ElapsedTime();
@@ -23,6 +23,7 @@ public class AutonomousBlueRightParkShared extends AbstractAutonomous {
     boolean endTraj1 = false;
     boolean traj1Done = false;
     boolean traj2Done = false;
+    boolean retractDone = true;
     @Override
     public void initialize() {
         traj1 = robot.drive.trajectorySequenceBuilder(initPose())
@@ -94,10 +95,11 @@ public class AutonomousBlueRightParkShared extends AbstractAutonomous {
                 retractTime = robot.restTime();
                 traj1Done = false;
             }
-            if (time > retractTime) {
+            if (retractDone && time > retractTime) {
                 robot.armProfile = forwardArmProfile2(time);
                 robot.wristProfile = forwardWristProfile2(time);
                 doneTime = robot.armProfile.getTf();
+                retractDone = false;
             }
             robot.drive.update();
             robot.update(time);
