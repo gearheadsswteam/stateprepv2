@@ -62,7 +62,7 @@ public class ValueStorage {
         return new ProfileChain(new TrapezoidalProfile(wristMaxVel, wristMaxAccel, t + 0.3, wristIn, 0, wristUp, 0));
     }
     public static double[] liftLowClose = {150, armUp, wristUp};
-    public static double[] liftMedClose = {600, armUp, wristUp};
+    public static double[] liftMedClose = {550, armUp, wristUp};
     public static double[] liftHighClose = {1000, armUp, wristUp};
     public static double[] liftHighFar = {1050, 0.70, wristUp};
     public static double[] liftGroundClose = {0, 0.97, 0.30};
