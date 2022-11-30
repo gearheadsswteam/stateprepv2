@@ -39,35 +39,31 @@ public class AutonomousBlueRightParkShared extends AbstractAutonomous {
                     endTraj1 = true;
                     traj1Done = true;
                     traj1Time = clock.seconds();
-                })
-                .build();
-        traj2 = new TrajectorySequence[]{
-                robot.drive.trajectorySequenceBuilder(dropPose)
-                        .setReversed(true)
-                        .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
-                        .setReversed(false)
-                        .lineTo(parkPose[0].vec())
-                        .addTemporalMarker(1, 0, () -> {
-                            traj2Done = true;
-                        })
-                        .build(),
-                robot.drive.trajectorySequenceBuilder(dropPose)
-                        .setReversed(true)
-                        .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
-                        .addTemporalMarker(1, 0, () -> {
-                            traj2Done = true;
-                        })
-                        .build(),
-                robot.drive.trajectorySequenceBuilder(dropPose)
-                        .setReversed(true)
-                        .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
-                        .setReversed(false)
-                        .lineTo(parkPose[2].vec())
-                        .addTemporalMarker(1, 0, () -> {
-                            traj2Done = true;
-                        })
-                        .build(),
-        };
+                }).build();
+            traj2 = new TrajectorySequence[] {
+                    robot.drive.trajectorySequenceBuilder(dropPose)
+                            .setReversed(true)
+                            .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
+                            .setReversed(false)
+                            .lineTo(parkPose[0].vec())
+                            .addTemporalMarker(1, 0, () -> {
+                                traj2Done = true;
+                            }).build(),
+                    robot.drive.trajectorySequenceBuilder(dropPose)
+                            .setReversed(true)
+                            .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
+                            .addTemporalMarker(1, 0, () -> {
+                                traj2Done = true;
+                            }).build(),
+                    robot.drive.trajectorySequenceBuilder(dropPose)
+                            .setReversed(true)
+                            .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
+                            .setReversed(false)
+                            .lineTo(parkPose[2].vec())
+                            .addTemporalMarker(1, 0, () -> {
+                                traj2Done = true;
+                            }).build(),
+            };
     }
     @Override
     public void run() {
@@ -75,7 +71,7 @@ public class AutonomousBlueRightParkShared extends AbstractAutonomous {
         robot.armProfile = autonomousArmProfile(0);
         robot.wristProfile = autonomousWristProfile(0);
         robot.drive.followTrajectorySequenceAsync(traj1);
-        while(opModeIsActive() && !traj2Done && time < doneTime) {
+        while(opModeIsActive() && (!traj2Done || time < doneTime)) {
             time = clock.seconds();
             if (startLift) {
                 robot.extendLiftProfile(time, liftHighClose[0], 0);
@@ -88,7 +84,7 @@ public class AutonomousBlueRightParkShared extends AbstractAutonomous {
                 endTraj1 = false;
             }
             if (traj1Done && time - traj1Time > 1) {
-                robot.drive.followTrajectorySequenceAsync(traj2[2]);
+                robot.drive.followTrajectorySequenceAsync(traj2[runCase - 1]);
                 robot.extendLiftProfile(time, 0, 0);
                 robot.extendArmProfile(time, armIn, 0);
                 robot.extendWristProfile(time, wristIn, 0);

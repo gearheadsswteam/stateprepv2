@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.classes.SignalDetector;
 public abstract class AbstractAutonomous extends LinearOpMode {
     public Robot robot = new Robot();
     SignalDetector detector;
-    int runCase = 1;
-    int caseDetected = 3;
+    int runCase = 2;
+    int caseDetected = 2;
     int caseDetectionLength = 0;
     ElapsedTime clock = new ElapsedTime();
     double time;
@@ -36,6 +36,7 @@ public abstract class AbstractAutonomous extends LinearOpMode {
             }
             robot.update(time);
             telemetry.addData("Case Detected", caseDetected);
+            telemetry.addData("Case to Run", runCase);
             telemetry.update();
         }
         detector.end();
