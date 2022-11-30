@@ -7,21 +7,22 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.classes.Robot;
 import org.firstinspires.ftc.teamcode.classes.SignalDetector;
 public abstract class AbstractAutonomous extends LinearOpMode {
-    public Robot robot;
+    public Robot robot = new Robot();
     SignalDetector detector;
     int runCase = 1;
-    int caseDetected = 1;
+    int caseDetected = 3;
     int caseDetectionLength = 0;
     ElapsedTime clock = new ElapsedTime();
     double time;
     @Override
     public void runOpMode() {
         robot.init(hardwareMap, armIn, wristIn, gripperHold);
-        detector = new SignalDetector(hardwareMap);
+        //detector = new SignalDetector(hardwareMap);
         //detector.init();
         robot.drive.setPoseEstimate(initPose());
         initialize();
         robot.liftL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (!isStarted() && !isStopRequested()) {
             time = clock.seconds();
             /*
@@ -34,8 +35,8 @@ public abstract class AbstractAutonomous extends LinearOpMode {
             if (caseDetectionLength >= signalMinCount) {
                 runCase = caseDetected;
             }
-             */
             robot.update(time);
+             */
             telemetry.addData("Case Detected", caseDetected);
             telemetry.update();
         }
