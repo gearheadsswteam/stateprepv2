@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-@Autonomous(name = "AutonomousBlueLeftParkSafe", group = "BlueLeft")
+@Autonomous(name = "LeftPark-Safe", group = "Left")
 public class AutonomousBlueLeftParkSafe extends AbstractAutonomous {
     Pose2d dropPose = new Pose2d(36, 36, -2.4);
     Pose2d[] parkPose = new Pose2d[] {new Pose2d(59, 34, -PI / 2), new Pose2d(35, 34, -PI / 2), new Pose2d(11, 34, -PI / 2)};
@@ -89,7 +89,7 @@ public class AutonomousBlueLeftParkSafe extends AbstractAutonomous {
             if (retractDone && time > retractTime) {
                 robot.armProfile = forwardArmProfile2(time);
                 robot.wristProfile = forwardWristProfile2(time);
-                doneTime = robot.armProfile.getTf();
+                doneTime = robot.armTime();
                 retractDone = false;
             }
             robot.drive.update();
