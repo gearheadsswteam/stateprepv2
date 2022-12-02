@@ -11,10 +11,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.Scalar;
 import org.opencv.core.Mat;
 import java.util.ArrayList;
-public class SignalDetectorPipeline extends OpenCvPipeline {
+public class ColorSignalDetectorPipeline extends OpenCvPipeline {
     Mat process = new Mat();
     Mat output = new Mat();
     int caseDetected = 0;
+    @Override
     public Mat processFrame(Mat input) {
         output = input.clone();
         int[] maxColor = {0, -1};
