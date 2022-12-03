@@ -4,8 +4,8 @@ public class ValueStorage {
     public static int holderMinCount = 10;
     public static int signalMinCount = 10;
     public static double holderDetectionThreshold = 1.2;
-    public static double odoUp = 0.45;
-    public static double odoDown = 0.64;
+    public static double odoUp = 0.22;
+    public static double odoDown = 0.47;
     public static double rollerDown = 0.48;
     public static double rollerUp = 0.25;
     public static double rollerRetract = 0.25;

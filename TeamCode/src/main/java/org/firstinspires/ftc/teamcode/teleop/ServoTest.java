@@ -17,7 +17,7 @@ public class ServoTest extends LinearOpMode {
     boolean yReleased = false;
     @Override
     public void runOpMode() {
-        test = hardwareMap.get(Servo.class, "gripper");
+        test = hardwareMap.get(Servo.class, "retract");
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             if (gamepad1.a) {
