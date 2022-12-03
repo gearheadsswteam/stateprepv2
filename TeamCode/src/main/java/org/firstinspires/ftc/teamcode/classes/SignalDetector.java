@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.classes;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.vision.SignalDetectorPipeline;
+import org.firstinspires.ftc.teamcode.vision.ColorSignalDetectorPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 public class SignalDetector {
     OpenCvCamera camera;
-    SignalDetectorPipeline pipeline;
+    ColorSignalDetectorPipeline pipeline;
     public SignalDetector(HardwareMap hwMap) {
         int id = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         WebcamName name = hwMap.get(WebcamName.class, "camera");
         this.camera = OpenCvCameraFactory.getInstance().createWebcam(name, id);
-        this.pipeline = new SignalDetectorPipeline();
+        this.pipeline = new ColorSignalDetectorPipeline();
     }
     public void init() {
         camera.setPipeline(pipeline);

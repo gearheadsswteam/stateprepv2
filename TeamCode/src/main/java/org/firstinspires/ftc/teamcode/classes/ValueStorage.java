@@ -3,12 +3,14 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 public class ValueStorage {
     public static int holderMinCount = 10;
     public static int signalMinCount = 10;
-    public static double holderDetectionThreshold = 0.75;
+    public static double holderDetectionThreshold = 1.2;
+    public static double odoUp = 0.45;
+    public static double odoDown = 0.64;
     public static double rollerDown = 0.48;
     public static double rollerUp = 0.25;
     public static double rollerRetract = 0.25;
-    public static double gripperHold = 0.10;
-    public static double gripperRelease = 0.29;
+    public static double gripperHold = 0.26;
+    public static double gripperRelease = 0.49;
     public static double armRest = 0.06;
     public static double armUp = 0.55;
     public static double armIn = 0.40;

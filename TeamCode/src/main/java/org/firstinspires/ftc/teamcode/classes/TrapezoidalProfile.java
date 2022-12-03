@@ -27,6 +27,7 @@ public class TrapezoidalProfile extends MotionProfile {
             this.tf = ti + (2 * sqrt(am * (xi - xf) + (pow(vi, 2) + pow(vf, 2)) / 2) + vi + vf) / this.am;
         }
     }
+    @Override
     public double getX(double t) {
         if (t < ti) {
             return xi + vi * (t - ti);
@@ -64,6 +65,7 @@ public class TrapezoidalProfile extends MotionProfile {
             return xf + vf * (t - tf);
         }
     }
+    @Override
     public double getV(double t) {
         if (t < ti) {
             return vi;

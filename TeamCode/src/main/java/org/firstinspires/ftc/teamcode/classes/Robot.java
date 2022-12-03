@@ -47,7 +47,7 @@ public class Robot {
     public TrapezoidalProfile liftProfile = new TrapezoidalProfile(liftMaxVel, liftMaxAccel, 0, 0, 0, 0, 0);
     public MotionProfile armProfile;
     public MotionProfile wristProfile;
-    public void init(HardwareMap hwMap, double armPos, double wristPos, double gripperPos) {
+    public void init(HardwareMap hwMap, double armPos, double wristPos) {
         drive = new SampleMecanumDrive(hwMap);
         fl = hwMap.get(DcMotorEx.class, "fl");
         fr = hwMap.get(DcMotorEx.class, "fr");
@@ -78,8 +78,6 @@ public class Robot {
         liftR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armProfile = new TrapezoidalProfile(armMaxVel, armMaxAccel, 0, armPos, 0, armPos, 0);
         wristProfile = new TrapezoidalProfile(wristMaxVel, wristMaxAccel, 0, wristPos, 0, wristPos, 0);
-        gripper.setPosition(gripperPos);
-        roller.setPosition(rollerRetract);
         for (LynxModule hub: allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
@@ -94,6 +92,9 @@ public class Robot {
     }
     public double restTime() {
         return max(max(liftProfile.getTf(), armProfile.getTf()), wristProfile.getTf());
+    }
+    public double armTime() {
+        return max(armProfile.getTf(), wristProfile.getTf());
     }
     public void update(double time) {
         liftPidf.set(liftProfile.getX(time));

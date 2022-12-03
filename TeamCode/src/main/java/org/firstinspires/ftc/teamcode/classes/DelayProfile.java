@@ -8,9 +8,11 @@ public class DelayProfile extends MotionProfile {
         this.xf = xi + vi * (tf - ti);
         this.vf = vi;
     }
+    @Override
     public double getX(double t) {
         return xi + vi * (t - ti);
     }
+    @Override
     public double getV(double t) {
         return vi;
     }

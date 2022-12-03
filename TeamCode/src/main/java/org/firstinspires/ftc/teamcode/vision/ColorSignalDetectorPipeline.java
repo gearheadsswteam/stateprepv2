@@ -14,13 +14,15 @@ import java.util.ArrayList;
 public class ColorSignalDetectorPipeline extends OpenCvPipeline {
     Mat process = new Mat();
     Mat output = new Mat();
+    ArrayList<MatOfPoint> contours;
+    Point[] contourArr;
     int caseDetected = 0;
     @Override
     public Mat processFrame(Mat input) {
         output = input.clone();
+        contours = new ArrayList<>();
         int[] maxColor = {0, -1};
         for (int i = 0; i < signalLower.length; i++) {
-            ArrayList<MatOfPoint> contours = new ArrayList<>();
             Rect maxRect = new Rect();
             Imgproc.cvtColor(input, process, Imgproc.COLOR_RGB2YCrCb);
             Core.inRange(process, signalLower[i], signalUpper[i], process);
@@ -30,7 +32,7 @@ public class ColorSignalDetectorPipeline extends OpenCvPipeline {
             Imgproc.findContours(process, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             Imgproc.drawContours(output, contours, -1, new Scalar(0, 0, 0));
             for (MatOfPoint contour : contours) {
-                Point[] contourArr = contour.toArray();
+                contourArr = contour.toArray();
                 Rect boundingRect = Imgproc.boundingRect(new MatOfPoint2f(contourArr));
                 if (contourArr.length >= 15 && boundingRect.area() > signalMinArea && boundingRect.area() > maxRect.area()) {
                     maxRect = boundingRect.clone();
@@ -49,9 +51,11 @@ public class ColorSignalDetectorPipeline extends OpenCvPipeline {
         } else {
             Imgproc.putText(output, "Case: " + caseDetected, new Point(10, 350), 0, 0.5, new Scalar(0, 0, 255), 1);
         }
+        return output;
+    }
+    public void end() {
         process.release();
         output.release();
-        return input;
     }
     public int getCaseDetected() {
         return caseDetected;

@@ -22,6 +22,7 @@ public class ProfileChain extends MotionProfile {
         this.vf = profile.vf;
     }
     public ProfileChain() {}
+    @Override
     public double getX(double t) {
         for (int i = 0; i < profiles.size() - 2; i++) {
             if (t < profiles.get(i + 1).getTi()) {
@@ -30,19 +31,14 @@ public class ProfileChain extends MotionProfile {
         }
         return profiles.get(profiles.size() - 1).getX(t);
     }
+    @Override
     public double getV(double t) {
-        if (t < profiles.get(0).getTf()) {
-            return profiles.get(0).getV(t);
-        }
-        for (int i = 1; i < profiles.size() - 1; i++) {
-            if (profiles.get(i - 1).getTf() <= t && t < profiles.get(i).getTf()) {
+        for (int i = 0; i < profiles.size() - 2; i++) {
+            if (t < profiles.get(i + 1).getTi()) {
                 return profiles.get(i).getV(t);
             }
         }
         return profiles.get(profiles.size() - 1).getV(t);
-    }
-    public double getTf() {
-        return tf;
     }
     public ArrayList<MotionProfile> getProfiles() {
         return profiles;

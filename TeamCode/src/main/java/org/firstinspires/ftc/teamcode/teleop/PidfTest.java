@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.classes.TrapezoidalProfile;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
+@Disabled
 @TeleOp (name = "PidfTest", group = "TeleOp")
 public class PidfTest extends LinearOpMode {
     public static double KP = liftKp;
@@ -27,7 +29,6 @@ public class PidfTest extends LinearOpMode {
     DcMotorEx test1;
     DcMotorEx test2;
     PidfController lift = new PidfController(KP, KI, KD) {
-        @Override
         public double kf(double input) {
             return kfTest (input);
         }

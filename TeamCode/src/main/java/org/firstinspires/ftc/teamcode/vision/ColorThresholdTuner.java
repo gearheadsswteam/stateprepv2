@@ -9,6 +9,7 @@ public class ColorThresholdTuner extends OpenCvPipeline {
     public Scalar upper = new Scalar(255, 255, 255);
     Mat process = new Mat();
     Mat output = new Mat();
+    @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, process, Imgproc.COLOR_RGB2YCrCb);
         Core.inRange(process, lower, upper, process);
