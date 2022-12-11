@@ -1,17 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.armIn;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.autonomousArmProfile;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.autonomousWristProfile;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardArmProfile2;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardWristProfile2;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.gripperRelease;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.holderDetectionThreshold;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.liftHighClose;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.liftHighFar;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.rollerUp;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.wristIn;
-import static java.lang.Math.PI;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.*;
+import static java.lang.Math.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -32,7 +22,7 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
     Pose2d[] parkPose = new Pose2d[]{new Pose2d(-11, 34, -PI / 2), new Pose2d(-35, 34, -PI / 2), new Pose2d(-59, 34, -PI / 2)};
     Pose2d knockPose = new Pose2d(-60, 11, 0);
     Pose2d backPose = new Pose2d(-50, 11, 0);
-
+    Pose2d intakePose = new Pose2d(-60, 11, 0);
     ElapsedTime clock = new ElapsedTime();
     double time = 0;
     double traj1Time = 1000;
@@ -44,10 +34,9 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
     boolean endTraj1 = false;
     boolean endTraj3 = false;
     boolean traj1Done = false;
-    boolean traj2Done = false;
     boolean traj3Done = false;
-    boolean traj4Done = false;
     boolean traj5Done = false;
+    boolean intakeTrajDone = false;
 
     boolean retractDone = true;
     boolean usingSensor = false;
@@ -84,11 +73,23 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .setReversed(true)
                 .splineTo(knockPose.vec(), knockPose.getHeading() + PI)
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(backPose.vec())
+                .addDisplacementMarker(() -> {
+                    usingSensor = true;
+                    robot.roller.setPosition(rollerDown);
+                    robot.setIntakePowers(1, 1);
+                })
+                .lineTo(intakePose.vec())
+                .addTemporalMarker(1, 0, () -> {
+                    intakeTrajDone = true;
+                })
                 .build();
 
         //Stack to the drop point
-        traj3 = null;
+        traj3 = robot.drive.trajectorySequenceBuilder(backPose)
+                .splineTo(dropPose.vec(), dropPose.getHeading())
+                .build();
 
         //Drop point to stack for the 2nd cone
         traj4 = null;
@@ -150,16 +151,21 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
                 traj1Done = false;
             }
 
-            /**
-             //**
-             // Cone is inside
-             //Go to drop position
-             if (usingSensor && holderDetectionCount > holderMinCount) {//cone is inside
-             robot.drive.followTrajectorySequenceAsync(traj3);
-             usingSensor = false;
-             //Cone is inside
-             }
+            //**
+            // Cone is inside
+            //Go to drop position
+            if (intakeTrajDone || (usingSensor && holderDetectionCount > holderMinCount)) {//cone is inside
+                robot.drive.followTrajectorySequenceAsync(traj3);
+                robot.armProfile = forwardArmProfile1(time);
+                robot.wristProfile = forwardWristProfile1(time);
+                robot.gripper.setPosition(gripperHold);
+                robot.setIntakePowers(-0.5, -0.5);
+                usingSensor = false;
+                intakeTrajDone = false;
+                //Cone is inside
+            }
 
+            /**
              //You are at drop position
              if (endTraj3) {
              robot.gripper.setPosition(gripperRelease);
