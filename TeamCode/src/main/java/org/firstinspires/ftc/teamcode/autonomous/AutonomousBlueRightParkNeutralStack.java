@@ -7,7 +7,6 @@ import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardArmProf
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardWristProfile2;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.gripperRelease;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.holderDetectionThreshold;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.holderMinCount;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.liftHighClose;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.liftHighFar;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.rollerUp;
@@ -29,8 +28,10 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
 
     int holderDetectionCount = 0;
-    Pose2d dropPose = new Pose2d(-45, 8, -0.4);
+    Pose2d dropPose = new Pose2d(-45, 9.5, -0.45);
     Pose2d[] parkPose = new Pose2d[]{new Pose2d(-11, 34, -PI / 2), new Pose2d(-35, 34, -PI / 2), new Pose2d(-59, 34, -PI / 2)};
+    Pose2d knockPose = new Pose2d(-60, 11, 0);
+    Pose2d backPose = new Pose2d(-50, 11, 0);
 
     ElapsedTime clock = new ElapsedTime();
     double time = 0;
@@ -63,13 +64,13 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
     public void initialize() {
         //Start to drop point
         traj1 = robot.drive.trajectorySequenceBuilder(initPose())
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .splineTo(new Vector2d(-35, 40), -PI / 2)
                 .lineTo(new Vector2d(-35, 25))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(25))
                 .splineToSplineHeading(dropPose, 2)
+                .waitSeconds(0.5)
                 .resetConstraints()
-                .addTemporalMarker(1, -1.0, () -> {
+                .addTemporalMarker(1, -1, () -> {
                     startLift = true;
                 })
                 .addTemporalMarker(1, 0, () -> {
@@ -79,7 +80,12 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
                 }).build();
 
         //Drop point to stack
-        traj2 = null; //
+        traj2 = robot.drive.trajectorySequenceBuilder(dropPose)
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
+                .setReversed(true)
+                .splineTo(knockPose.vec(), knockPose.getHeading() + PI)
+                .lineTo(backPose.vec())
+                .build();
 
         //Stack to the drop point
         traj3 = null;
@@ -103,7 +109,7 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
         robot.drive.followTrajectorySequenceAsync(traj1);
 
         //while (opModeIsActive() && !isStopRequested() && (!traj1Done || time < doneTime)) {
-        while (opModeIsActive() && !isStopRequested() && (!traj1Done)) {
+        while (opModeIsActive() && !isStopRequested()) {
             time = clock.seconds();
 
             // Cone detection inside
@@ -127,44 +133,53 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
                 endTraj1 = false;
             }
 
-            /**
+
             //Execute Traj 2 from Drop position to stack
             //Drop the stack
             //GO back until cone is intaken
             //Give 1 second for cone to drop
             if (traj1Done && time - traj1Time > 1) {
                 robot.drive.followTrajectorySequenceAsync(traj2);
+                //Retract the lift
+                robot.extendLiftProfile(time, 0, 0);
+                robot.extendArmProfile(time, armIn, 0);
+                robot.extendWristProfile(time, wristIn, 0);
+                robot.roller.setPosition(rollerUp);
+                robot.setIntakePowers(0, 0.5);
+                retractTime = robot.restTime();
                 traj1Done = false;
             }
 
-            // Cone is inside
-            //Go to drop position
-            if (usingSensor && holderDetectionCount > holderMinCount) {//cone is inside
-                robot.drive.followTrajectorySequenceAsync(traj3);
-                usingSensor = false;
-                //Cone is inside
-            }
+            /**
+             //**
+             // Cone is inside
+             //Go to drop position
+             if (usingSensor && holderDetectionCount > holderMinCount) {//cone is inside
+             robot.drive.followTrajectorySequenceAsync(traj3);
+             usingSensor = false;
+             //Cone is inside
+             }
 
-            //You are at drop position
-            if (endTraj3) {
-                robot.gripper.setPosition(gripperRelease);
-                endTraj3 = false;
-            }
+             //You are at drop position
+             if (endTraj3) {
+             robot.gripper.setPosition(gripperRelease);
+             endTraj3 = false;
+             }
 
-            if (traj3Done && time - traj3Time > 1) {
-                //three cones
-                if (cycles < 3) {
-                    robot.drive.followTrajectorySequenceAsync(traj4);
-                } else {//Three cycles for three cones done...go to park
-                    robot.drive.followTrajectorySequenceAsync(traj5[runCase - 1]);
-                    robot.extendLiftProfile(time, 0, 0);
-                    robot.extendArmProfile(time, armIn, 0);
-                    robot.extendWristProfile(time, wristIn, 0);
-                    retractTime = robot.restTime();
-                }
-                traj3Done = false;
-            }
-
+             if (traj3Done && time - traj3Time > 1) {
+             //three cones
+             if (cycles < 3) {
+             robot.drive.followTrajectorySequenceAsync(traj4);
+             } else {//Three cycles for three cones done...go to park
+             robot.drive.followTrajectorySequenceAsync(traj5[runCase - 1]);
+             robot.extendLiftProfile(time, 0, 0);
+             robot.extendArmProfile(time, armIn, 0);
+             robot.extendWristProfile(time, wristIn, 0);
+             retractTime = robot.restTime();
+             }
+             traj3Done = false;
+             }
+             **/
             if (retractDone && time > retractTime) {
                 robot.armProfile = forwardArmProfile2(time);
                 robot.wristProfile = forwardWristProfile2(time);
@@ -172,9 +187,6 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
                 retractDone = false;
             }
 
-             **/
-
-            sleep(3000);
 
             robot.drive.update();
             robot.update(time);
