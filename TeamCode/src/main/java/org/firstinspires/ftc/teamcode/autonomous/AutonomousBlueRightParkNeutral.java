@@ -26,6 +26,7 @@ public class AutonomousBlueRightParkNeutral extends AbstractAutonomous {
     boolean retractDone = true;
     @Override
     public void initialize() {
+        //Start to drop point
         traj1 = robot.drive.trajectorySequenceBuilder(initPose())
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .splineTo(new Vector2d(-35, 30), -PI / 2)
@@ -40,6 +41,8 @@ public class AutonomousBlueRightParkNeutral extends AbstractAutonomous {
                     traj1Done = true;
                     traj1Time = clock.seconds();
                 }).build();
+
+        //Drop point to park
             traj2 = new TrajectorySequence[] {
                     robot.drive.trajectorySequenceBuilder(dropPose)
                             .setReversed(true)
