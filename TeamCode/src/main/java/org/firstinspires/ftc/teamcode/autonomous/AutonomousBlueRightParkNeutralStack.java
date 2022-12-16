@@ -30,7 +30,6 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
     double doneTime = 1000;
 
     boolean endDropTraj = false;
-    boolean endTraj3 = false;
     boolean dropTrajDone = false;
     boolean traj5Done = false;
     boolean intakeTrajDone = false;
@@ -44,7 +43,7 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
     TrajectorySequence traj2; //From drop to stack
     TrajectorySequence traj3; //From stack to drop
     TrajectorySequence traj4; //From drop to stack
-    TrajectorySequence traj5; //From drop to park
+    TrajectorySequence[] traj5; //From drop to park
 
     @Override
     public void initialize() {
@@ -95,11 +94,22 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
                     endDropTraj = true;
                     dropTrajDone = true;
                     dropTrajTime = time;
+                    cycles++;
                 })
                 .build();
 
         //Drop point to stack for the 2nd cone
-        traj4 = null;
+        traj4 = robot.drive.trajectorySequenceBuilder(dropPose)
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
+                .setReversed(true)
+                .splineTo(backPose.vec(), backPose.getHeading() + PI)
+                .addDisplacementMarker(() -> {
+                    usingSensor = true;
+                    robot.roller.setPosition(rollerDown);
+                    robot.setIntakePowers(1, 1);
+                })
+                .lineTo(intakePose.vec())
+                .build();
 
         //Drop poin to park
         traj5 = null;
@@ -143,15 +153,30 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
             //GO back until cone is intaken
             //Give 1 second for cone to drop
             if (dropTrajDone && time - dropTrajTime > 1) {
-                robot.drive.followTrajectorySequenceAsync(traj2);
-                //Retract the lift
-                robot.extendLiftProfile(time, 0, 0);
-                robot.extendArmProfile(time, armIn, 0);
-                robot.extendWristProfile(time, wristIn, 0);
-                robot.roller.setPosition(rollerUp);
-                robot.setIntakePowers(0, 0.5);
-                retractTime = robot.restTime();
-                dropTrajDone = false;
+                if (cycles == 0) {
+                    robot.drive.followTrajectorySequenceAsync(traj2);
+                    //Retract the lift
+                    robot.extendLiftProfile(time, 0, 0);
+                    robot.extendArmProfile(time, armIn, 0);
+                    robot.extendWristProfile(time, wristIn, 0);
+                    robot.roller.setPosition(rollerUp);
+                    robot.setIntakePowers(0, 0.5);
+                    retractTime = robot.restTime();
+                    dropTrajDone = false;
+                } else if (cycles < 3) {
+                    robot.drive.followTrajectorySequenceAsync(traj4);
+                    robot.extendLiftProfile(time, 0, 0);
+                    robot.extendArmProfile(time, armIn, 0);
+                    robot.extendWristProfile(time, wristIn, 0);
+                    retractTime = robot.restTime();
+                    dropTrajDone = false;
+                } else {//Three cycles for three cones done...go to park
+                        robot.drive.followTrajectorySequenceAsync(traj5[runCase - 1]);
+                        robot.extendLiftProfile(time, 0, 0);
+                        robot.extendArmProfile(time, armIn, 0);
+                        robot.extendWristProfile(time, wristIn, 0);
+                        retractTime = robot.restTime();
+                }
             }
 
             //**
@@ -163,6 +188,7 @@ public class AutonomousBlueRightParkNeutralStack extends AbstractAutonomous {
                         //.addExtendTrapezoidal(armMaxVel, armMaxAccel, liftHighClose[1], 0);
                 robot.wristProfile = forwardWristProfile1(time);
                         //.addExtendTrapezoidal(armMaxVel, armMaxAccel, liftHighClose[1], 0);
+                robot.roller.setPosition(rollerRetract);
                 robot.gripper.setPosition(gripperHold);
                 robot.setIntakePowers(-0.5, -0.5);
                 usingSensor = false;
