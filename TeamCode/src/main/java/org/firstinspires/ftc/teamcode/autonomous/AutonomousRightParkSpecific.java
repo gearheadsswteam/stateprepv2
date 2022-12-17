@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "RightPark-Specific", group = "Right")
-public class AutonomousBlueRightParkSpecific extends AbstractAutonomous {
+public class AutonomousRightParkSpecific extends AbstractAutonomous {
     Pose2d dropPose = new Pose2d(-20, 33, -0.45);
     Pose2d[] parkPose = new Pose2d[] {new Pose2d(-11, 34, 0), new Pose2d(-35, 34, 0), new Pose2d(-59, 34, 0)};
     TrajectorySequence traj1;

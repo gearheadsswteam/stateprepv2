@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-@Autonomous(name = "RightPark-Neutral", group = "Right")
-public class AutonomousBlueRightParkNeutral extends AbstractAutonomous {
-    Pose2d dropPose = new Pose2d(-33, 19, -1.1);
-    Pose2d[] parkPose = new Pose2d[] {new Pose2d(-11, 34, -PI / 2), new Pose2d(-35, 34, -PI / 2), new Pose2d(-59, 34, -PI / 2)};
+@Autonomous(name = "LeftPark-Safe", group = "Left")
+public class AutonomousLeftParkSafe extends AbstractAutonomous {
+    Pose2d dropPose = new Pose2d(36, 36, -2.4);
+    Pose2d[] parkPose = new Pose2d[] {new Pose2d(59, 34, -PI / 2), new Pose2d(35, 34, -PI / 2), new Pose2d(11, 34, -PI / 2)};
     TrajectorySequence traj1;
     TrajectorySequence[] traj2;
     ElapsedTime clock = new ElapsedTime();
@@ -26,14 +26,13 @@ public class AutonomousBlueRightParkNeutral extends AbstractAutonomous {
     boolean retractDone = true;
     @Override
     public void initialize() {
-        //Start to drop point
         traj1 = robot.drive.trajectorySequenceBuilder(initPose())
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
-                .splineTo(new Vector2d(-35, 30), -PI / 2)
+                .splineTo(new Vector2d(35, 50), -PI / 2)
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(25))
                 .splineTo(dropPose.vec(), dropPose.getHeading())
                 .resetConstraints()
-                .addTemporalMarker(1, -1.6, () -> {
+                .addTemporalMarker(1, -1.2, () -> {
                     startLift = true;
                 })
                 .addTemporalMarker(1, 0, () -> {
@@ -41,30 +40,25 @@ public class AutonomousBlueRightParkNeutral extends AbstractAutonomous {
                     traj1Done = true;
                     traj1Time = clock.seconds();
                 }).build();
-
-        //Drop point to park
-            traj2 = new TrajectorySequence[] {
-                    robot.drive.trajectorySequenceBuilder(dropPose)
-                            .setReversed(true)
-                            .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
-                            .lineTo(parkPose[0].vec())
-                            .addTemporalMarker(1, 0, () -> {
-                                traj2Done = true;
-                            }).build(),
-                    robot.drive.trajectorySequenceBuilder(dropPose)
-                            .setReversed(true)
-                            .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
-                            .addTemporalMarker(1, 0, () -> {
-                                traj2Done = true;
-                            }).build(),
-                    robot.drive.trajectorySequenceBuilder(dropPose)
-                            .setReversed(true)
-                            .splineTo(parkPose[1].vec(), parkPose[1].getHeading() + PI)
-                            .lineTo(parkPose[2].vec())
-                            .addTemporalMarker(1, 0, () -> {
-                                traj2Done = true;
-                            }).build(),
-            };
+        traj2 = new TrajectorySequence[] {
+                robot.drive.trajectorySequenceBuilder(dropPose)
+                        .lineToLinearHeading(parkPose[1])
+                        .lineTo(parkPose[0].vec())
+                        .addTemporalMarker(1, 0, () -> {
+                            traj2Done = true;
+                        }).build(),
+                robot.drive.trajectorySequenceBuilder(dropPose)
+                        .lineToLinearHeading(parkPose[1])
+                        .addTemporalMarker(1, 0, () -> {
+                            traj2Done = true;
+                        }).build(),
+                robot.drive.trajectorySequenceBuilder(dropPose)
+                        .lineToLinearHeading(parkPose[1])
+                        .lineTo(parkPose[2].vec())
+                        .addTemporalMarker(1, 0, () -> {
+                            traj2Done = true;
+                        }).build(),
+        };
     }
     @Override
     public void run() {
@@ -75,9 +69,9 @@ public class AutonomousBlueRightParkNeutral extends AbstractAutonomous {
         while(opModeIsActive() && !isStopRequested() && (!traj2Done || time < doneTime)) {
             time = clock.seconds();
             if (startLift) {
-                robot.extendLiftProfile(time, liftHighClose[0], 0);
-                robot.extendArmProfile(time, liftHighClose[1], 0);
-                robot.extendWristProfile(time, liftHighClose[2], 0);
+                robot.extendLiftProfile(time, liftMedClose[0], 0);
+                robot.extendArmProfile(time, liftMedClose[1], 0);
+                robot.extendWristProfile(time, liftMedClose[2], 0);
                 startLift = false;
             }
             if (endTraj1) {
@@ -108,6 +102,6 @@ public class AutonomousBlueRightParkNeutral extends AbstractAutonomous {
     }
     @Override
     public Pose2d initPose() {
-        return new Pose2d(-32, 60, -PI / 2);
+        return new Pose2d(32, 60, -PI / 2);
     }
 }
