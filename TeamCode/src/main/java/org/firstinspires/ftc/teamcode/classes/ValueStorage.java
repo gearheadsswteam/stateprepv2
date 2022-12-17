@@ -4,7 +4,7 @@ import static com.qualcomm.robotcore.util.Range.*;
 public class ValueStorage {
     public static int holderMinCount = 20;
     public static int signalMinCount = 10;
-    public static double holderDetectionThreshold = 0.5;
+    public static double holderDetectionThreshold = 0.75;
     public static double odoUp = 0.22;
     public static double odoDown = 0.47;
     public static double rollerDown = 0.48;
@@ -67,8 +67,8 @@ public class ValueStorage {
         //.addExtendTrapezoidal(armMaxVel, armMaxAccel, armUp, 0);
     }
     public static ProfileChain forwardWristProfile1(double t) {
-        return new ProfileChain(new TrapezoidalProfile(wristMaxVel, wristMaxAccel, t + 0.6, wristRest, 0, wristIn, 0))
-                .addExtendTrapezoidal(wristMaxVel, wristMaxAccel, t + 1.0, wristUp, 0);
+        return new ProfileChain(new TrapezoidalProfile(wristMaxVel, wristMaxAccel, t + 0.7, wristRest, 0, wristIn, 0))
+                .addExtendTrapezoidal(wristMaxVel, wristMaxAccel, t + 1.2, wristUp, 0);
     }
     public static ProfileChain backArmProfile1(double t) {
         return new ProfileChain(new TrapezoidalProfile(armMaxVel, armMaxAccel, t, armUp, 0, armRest, 0));

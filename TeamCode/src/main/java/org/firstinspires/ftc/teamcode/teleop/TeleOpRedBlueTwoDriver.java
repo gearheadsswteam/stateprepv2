@@ -152,7 +152,6 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                         if (rbPressed || holderDetectionCount >= holderMinCount) {
                             state = 1;
                             stateDir = true;
-                            robot.setIntakePowers(-0.5, -0.5);
                             robot.armProfile = forwardArmProfile1(time);
                             robot.wristProfile = forwardWristProfile1(time);
                             stateTime = robot.armTime();
@@ -209,7 +208,9 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                             stateTime = robot.armTime() + 0.25;
                             robot.roller.setPosition(rollerDown);
                         }
-                    } /*else if (robot.armProfile.getX(time) < armIn) {
+                    } else if (time > robot.armProfile.getTi()) {
+                        robot.setIntakePowers(-0.5, -0.5);
+                    }/*else if (robot.armProfile.getX(time) < armIn) {
                         if (aPressed) {
                             double upTime = robot.armTime();
                             state = 2;

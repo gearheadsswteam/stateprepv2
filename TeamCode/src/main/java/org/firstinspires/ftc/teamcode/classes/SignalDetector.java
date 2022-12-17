@@ -18,7 +18,7 @@ public class SignalDetector {
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened() {camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);}
+            public void onOpened() {camera.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);}
             @Override
             public void onError(int errorCode) {}
         });
