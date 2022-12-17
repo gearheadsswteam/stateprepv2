@@ -12,10 +12,11 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "RightStackNeutral", group = "Right")
 public class AutonomousRightStackNeutral extends AbstractAutonomous {
-    Pose2d dropPose = new Pose2d(-44, 9, -0.45);
-    Pose2d[] parkPose = {new Pose2d(-11, 10, 0), new Pose2d(-35, 10, 0), new Pose2d(-59, 10, 0)};
-    Pose2d knockPose = new Pose2d(-60, 11, 0);
-    Pose2d backPose = new Pose2d(-50, 11, 0);
+    Pose2d dropPose = new Pose2d(-43, 9, -0.57);
+    Pose2d[] parkPose = {new Pose2d(-11, 11, 0), new Pose2d(-35, 11, 0), new Pose2d(-59, 11, 0)};
+    Pose2d stackPose = new Pose2d(-60, 11, 0);
+    Pose2d knockPose = new Pose2d(-50, 11, 0);
+    Pose2d backPose = new Pose2d(-54, 11, 0);
     Pose2d intakePose = new Pose2d(-62, 11, 0);
     ElapsedTime clock = new ElapsedTime();
     double time = 0;
@@ -62,14 +63,14 @@ public class AutonomousRightStackNeutral extends AbstractAutonomous {
         traj2 = robot.drive.trajectorySequenceBuilder(dropPose)
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .setReversed(true)
-                .splineTo(knockPose.vec(), knockPose.getHeading() + PI)
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
-                .lineTo(backPose.vec())
+                .splineTo(stackPose.vec(), stackPose.getHeading() + PI)
+                .lineTo(knockPose.vec())
                 .addDisplacementMarker(() -> {
                     usingSensor = true;
                     robot.roller.setPosition(rollerDown);
                     robot.setIntakePowers(1, 1);
                 })
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(intakePose.vec())
                 .addTemporalMarker(1, 0, () -> {
                     intakeTrajDone = true;
@@ -78,7 +79,7 @@ public class AutonomousRightStackNeutral extends AbstractAutonomous {
 
         //Stack to the drop point
         traj3 = robot.drive.trajectorySequenceBuilder(backPose)
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .splineTo(dropPose.vec(), dropPose.getHeading())
                 .addTemporalMarker(1, -1.3, () -> {
                     robot.extendLiftProfile(time, liftHighClose[0], 0);
@@ -93,7 +94,7 @@ public class AutonomousRightStackNeutral extends AbstractAutonomous {
 
         //Drop point to stack for the 2nd cone
         traj4 = robot.drive.trajectorySequenceBuilder(dropPose)
-                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .setReversed(true)
                 .splineTo(backPose.vec(), backPose.getHeading() + PI)
                 .addDisplacementMarker(() -> {
@@ -203,7 +204,7 @@ public class AutonomousRightStackNeutral extends AbstractAutonomous {
             //Go to drop position
             if (intakeTrajDone || (usingSensor && robot.holder.getDistance(DistanceUnit.INCH) < holderDetectionThreshold)) {//cone is inside
                 TrajectorySequence tempTraj = robot.drive.trajectorySequenceBuilder(robot.drive.getPoseEstimate())
-                        .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
+                        .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                         .lineTo(backPose.vec())
                         .addTemporalMarker(0, 0.5, () -> {
                             robot.setIntakePowers(-0.5, -0.5);
