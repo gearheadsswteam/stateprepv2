@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.INTAKE_POWER;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.armIn;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.armRest;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.backArmProfile1;
@@ -43,6 +44,7 @@ import org.firstinspires.ftc.teamcode.classes.ValueStorage;
 
 @TeleOp(name = "TeleOpRedBlueTwoDriver")
 public class TeleOpRedBlueTwoDriver extends LinearOpMode {
+
     Robot robot = new Robot();
     int state = 0;
     int holderDetectionCount = 0;
@@ -136,7 +138,7 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                         }
                     } else {
                         if (gamepad1.right_trigger < 0.3) {
-                            robot.setIntakePowers(1, 1);
+                            robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
                         } else if (gamepad1.right_trigger < 0.7) {
                             robot.setIntakePowers(0, 0);
                         } else {

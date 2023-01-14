@@ -1,17 +1,37 @@
 package org.firstinspires.ftc.teamcode.autonomous;
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.*;
-import static java.lang.Math.*;
+
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.armIn;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.autonomousArmProfile;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.autonomousWristProfile;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardArmProfile1;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardArmProfile2;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardWristProfile1;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.forwardWristProfile2;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.gripperHold;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.gripperRelease;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.holderDetectionThreshold;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.liftMedClose;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.rollerDown;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.rollerRetract;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.rollerUp;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.sides;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.wristIn;
+import static java.lang.Math.PI;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.classes.ValueStorage;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-@Autonomous(name = "RightStackSafe", group = "Right")
-public class AutonomousRightStackSafe extends AbstractAutonomous {
+
+@Autonomous(name = "RightStackSafev2", group = "Right")
+public class AutonomousRightStackSafev2 extends AbstractAutonomous {
+    Pose2d dropPose1 = new Pose2d(-41, 15, 0.40);
     Pose2d dropPose = new Pose2d(-39, 15, 0.45);
     Pose2d[] parkPose = {new Pose2d(-11, 11, 0), new Pose2d(-35, 11, 0), new Pose2d(-59, 11, 0)};
     Pose2d stackPose = new Pose2d(-60, 11, 0);
@@ -47,7 +67,7 @@ public class AutonomousRightStackSafe extends AbstractAutonomous {
                 .splineTo(new Vector2d(-35, 40), -PI / 2)
                 .lineTo(new Vector2d(-35, 25))
                 .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(25))
-                .splineToSplineHeading(dropPose, 2)
+                .splineToSplineHeading(dropPose1, 2)
                 .waitSeconds(0.3)
                 .resetConstraints()
                 .addTemporalMarker(1, -0.7, () -> {
@@ -60,7 +80,7 @@ public class AutonomousRightStackSafe extends AbstractAutonomous {
                 }).build();
 
         //Drop point to stack
-        traj2 = robot.drive.trajectorySequenceBuilder(dropPose)
+        traj2 = robot.drive.trajectorySequenceBuilder(dropPose1)
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .setReversed(true)
                 .splineTo(stackPose.vec(), stackPose.getHeading() + PI)
@@ -110,7 +130,7 @@ public class AutonomousRightStackSafe extends AbstractAutonomous {
                 .build();
 
         //Drop poin to park
-        traj5 = new TrajectorySequence[] {
+        traj5 = new TrajectorySequence[]{
                 robot.drive.trajectorySequenceBuilder(dropPose)
                         .setReversed(true)
                         .splineTo(parkPose[2].vec(), PI)
@@ -259,7 +279,7 @@ public class AutonomousRightStackSafe extends AbstractAutonomous {
 
     @Override
     public int side() {
-        return ValueStorage.sides.BLUE;
+        return sides.BLUE;
     }
 
     @Override

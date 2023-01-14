@@ -105,7 +105,7 @@ public class TeleOpRedBlue extends LinearOpMode {
                         }
                     } else {
                         if (gamepad1.right_trigger < 0.3) {
-                            robot.setIntakePowers(1, 1);
+                            robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
                         } else if (gamepad1.right_trigger < 0.7) {
                             robot.setIntakePowers(0, 0);
                         } else {

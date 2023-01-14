@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "LeftStackNeutral", group = "Left")
 public class AutonomousLeftStackNeutral extends AbstractAutonomous {
+    public static final int INTAKE_POWER = 1;
     Pose2d dropPose = new Pose2d(46, 9, -2.65);
     Pose2d[] parkPose = {new Pose2d(59, 11, PI), new Pose2d(35, 11, PI), new Pose2d(11, 11, PI)};
     Pose2d stackPose = new Pose2d(61, 11, PI);
@@ -68,7 +69,7 @@ public class AutonomousLeftStackNeutral extends AbstractAutonomous {
                 .addDisplacementMarker(() -> {
                     usingSensor = true;
                     robot.roller.setPosition(rollerDown);
-                    robot.setIntakePowers(1, 1);
+                    robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
                 })
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(intakePose.vec())
@@ -100,7 +101,7 @@ public class AutonomousLeftStackNeutral extends AbstractAutonomous {
                 .addDisplacementMarker(() -> {
                     usingSensor = true;
                     robot.roller.setPosition(rollerDown);
-                    robot.setIntakePowers(1, 1);
+                    robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
                 })
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(intakePose.vec())

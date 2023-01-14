@@ -7,8 +7,8 @@ public class ValueStorage {
     public static double holderDetectionThreshold = 0.75;
     public static double odoUp = 0.22;
     public static double odoDown = 0.47;
-    public static double rollerDown = 0.48;
-    public static double rollerUp = 0.25;
+    public static double rollerDown = 0.86;
+    public static double rollerUp = 0.67;
     public static double rollerRetract = 0.25;
     public static double gripperHold = 0.48;
     public static double gripperRelease = 0.43;
@@ -35,6 +35,7 @@ public class ValueStorage {
     public static double[] liftHighFar = {1100, 0.70, wristUp};
     public static double[] liftGroundClose = {0, 0.90, 0.20};
     public static double[] liftPickup = {0, 0.96, 0.20};
+    public static final double INTAKE_POWER = 0.7;
     public static double[] adjust(double liftPos, double increment) {
         double weight;
         double groundInterval = 0.2;
