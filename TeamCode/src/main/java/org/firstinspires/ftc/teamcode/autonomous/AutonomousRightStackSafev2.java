@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.classes.ValueStorage.INTAKE_POWER_AUTO;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.armIn;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.autonomousArmProfile;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.autonomousWristProfile;
@@ -88,7 +88,7 @@ public class AutonomousRightStackSafev2 extends AbstractAutonomous {
                 .addDisplacementMarker(() -> {
                     usingSensor = true;
                     robot.roller.setPosition(rollerDown);
-                    robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
+                    robot.setIntakePowers(INTAKE_POWER_AUTO, INTAKE_POWER_AUTO);
                 })
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(intakePose.vec())
@@ -120,7 +120,7 @@ public class AutonomousRightStackSafev2 extends AbstractAutonomous {
                 .addDisplacementMarker(() -> {
                     usingSensor = true;
                     robot.roller.setPosition(rollerDown);
-                    robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
+                    robot.setIntakePowers(INTAKE_POWER_AUTO, INTAKE_POWER_AUTO);
                 })
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(intakePose.vec())

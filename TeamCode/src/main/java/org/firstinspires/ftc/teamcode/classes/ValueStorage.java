@@ -35,7 +35,8 @@ public class ValueStorage {
     public static double[] liftHighFar = {1100, 0.70, wristUp};
     public static double[] liftGroundClose = {0, 0.90, 0.20};
     public static double[] liftPickup = {0, 0.96, 0.20};
-    public static final double INTAKE_POWER = 0.7;
+    public static final double INTAKE_POWER_AUTO = 0.7;
+    public static final double INTAKE_POWER_TELEOP = 0.65;
     public static double[] adjust(double liftPos, double increment) {
         double weight;
         double groundInterval = 0.2;

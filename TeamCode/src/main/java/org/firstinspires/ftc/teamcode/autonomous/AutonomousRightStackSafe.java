@@ -68,7 +68,7 @@ public class AutonomousRightStackSafe extends AbstractAutonomous {
                 .addDisplacementMarker(() -> {
                     usingSensor = true;
                     robot.roller.setPosition(rollerDown);
-                    robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
+                    robot.setIntakePowers(INTAKE_POWER_AUTO, INTAKE_POWER_AUTO);
                 })
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(intakePose.vec())
@@ -100,7 +100,7 @@ public class AutonomousRightStackSafe extends AbstractAutonomous {
                 .addDisplacementMarker(() -> {
                     usingSensor = true;
                     robot.roller.setPosition(rollerDown);
-                    robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
+                    robot.setIntakePowers(INTAKE_POWER_AUTO, INTAKE_POWER_AUTO);
                 })
                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
                 .lineTo(intakePose.vec())

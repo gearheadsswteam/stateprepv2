@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.classes.ProfileChain;
 import org.firstinspires.ftc.teamcode.classes.Robot;
-import org.firstinspires.ftc.teamcode.classes.TrapezoidalProfile;
 import org.firstinspires.ftc.teamcode.classes.ValueStorage;
 @TeleOp(name = "TeleOpRedBlue")
 public class TeleOpRedBlue extends LinearOpMode {
@@ -105,7 +104,7 @@ public class TeleOpRedBlue extends LinearOpMode {
                         }
                     } else {
                         if (gamepad1.right_trigger < 0.3) {
-                            robot.setIntakePowers(INTAKE_POWER, INTAKE_POWER);
+                            robot.setIntakePowers(INTAKE_POWER_AUTO, INTAKE_POWER_AUTO);
                         } else if (gamepad1.right_trigger < 0.7) {
                             robot.setIntakePowers(0, 0);
                         } else {
