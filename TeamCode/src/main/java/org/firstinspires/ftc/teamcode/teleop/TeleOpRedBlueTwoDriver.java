@@ -35,6 +35,7 @@ import static java.lang.Math.sin;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -71,8 +72,22 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
     boolean rbPressed = false;
     boolean rbReleased = false;
     ElapsedTime clock = new ElapsedTime();
+    boolean secondHalf = false;                 // Use to prevent multiple half-time warning rumbles.
+
+    Gamepad.RumbleEffect customRumbleEffect;    // Use to build a custom rumble sequence.
+
+    // Example 1. a)   start by creating a three-pulse rumble sequence: right, LEFT, LEFT
+
+
     @Override
     public void runOpMode() {
+        customRumbleEffect = new Gamepad.RumbleEffect.Builder()
+                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
+                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
+                .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
+                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
+                .build();
         robot.init(hardwareMap, armRest, wristRest);
         robot.gripper.setPosition(gripperRelease);
         robot.retract.setPosition(odoUp);
@@ -132,6 +147,13 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                 holderDetectionCount = 0;
             }
             time = clock.seconds();
+
+//            if ((time > 105) && !secondHalf)  {
+//                gamepad1.runRumbleEffect(customRumbleEffect);
+//                gamepad2.runRumbleEffect(customRumbleEffect);
+//                secondHalf =true;
+//            }
+
             switch (state) {
                 case 0:
                     if (time < stateTime) {
@@ -300,7 +322,7 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                     if (time < stateTime) {
                     } else if (rbPressed) {
                         state = 4;
-                        robot.extendLiftProfile(time, 0, 0);
+                        robot.extendLiftProfileSlower(time, 0, 0);
                         robot.extendArmProfile(time, armIn, 0);
                         robot.extendWristProfile(time, wristIn, 0);
                         stateTime = robot.restTime();

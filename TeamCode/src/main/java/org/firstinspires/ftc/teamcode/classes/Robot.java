@@ -119,6 +119,11 @@ public class Robot {
     public void extendLiftProfile(double t, double xf, double vf) {
         liftProfile = liftProfile.extendTrapezoidal(t, xf, vf);
     }
+
+    public void extendLiftProfileSlower(double t, double xf, double vf) {
+        liftProfile = liftProfile.extendTrapezoidalSlower(t, xf, vf);
+    }
+
     public void extendArmProfile(double t, double xf, double vf) {
         armProfile = armProfile.extendTrapezoidal(armMaxVel, armMaxAccel, t, xf, vf);
     }

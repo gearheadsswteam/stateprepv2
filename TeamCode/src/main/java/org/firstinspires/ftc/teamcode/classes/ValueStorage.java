@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.classes;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import static com.qualcomm.robotcore.util.Range.*;
 public class ValueStorage {
-    public static int holderMinCount = 20;
+    public static int holderMinCount = 2;
     public static int signalMinCount = 10;
     public static double holderDetectionThreshold = 0.75;
     public static double odoUp = 0.22;
     public static double odoDown = 0.47;
-    public static double rollerDown = 0.86;
+    public static double rollerDown = 0.9;
     public static double rollerUp = 0.67;
     public static double rollerRetract = 0.25;
     public static double gripperHold = 0.48;
@@ -20,8 +20,8 @@ public class ValueStorage {
     public static double wristIn = 0.42;
     public static double armOffset = 1.01;
     public static double wristOffset = 1.10;
-    public static double liftMaxAccel = 3000;
-    public static double liftMaxVel = 1400;
+    public static double liftMaxAccel = 10000; //3000
+    public static double liftMaxVel = 7000;  //1400
     public static double liftKp = 0.05;
     public static double liftKi = 0;
     public static double liftKd = 0;

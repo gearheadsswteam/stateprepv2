@@ -106,6 +106,11 @@ public class TrapezoidalProfile extends MotionProfile {
     public TrapezoidalProfile extendTrapezoidal(double t, double xFinal, double vFinal) {
         return new TrapezoidalProfile(vm, am, t, getX(t), getV(t), xFinal, vFinal);
     }
+
+    public TrapezoidalProfile extendTrapezoidalSlower(double t, double xFinal, double vFinal) {
+        return new TrapezoidalProfile(1400, 3000, t, getX(t), getV(t), xFinal, vFinal);
+    }
+
     public TrapezoidalProfile extendTrapezoidal(double xFinal, double vFinal) {
         return new TrapezoidalProfile(vm, am, tf, xf, vf, xFinal, vFinal);
     }
