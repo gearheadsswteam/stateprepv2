@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import static org.firstinspires.ftc.teamcode.classes.ValueStorage.INTAKE_POWER_AUTO;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.INTAKE_POWER_TELEOP;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.armIn;
 import static org.firstinspires.ftc.teamcode.classes.ValueStorage.armRest;
@@ -44,8 +43,8 @@ import org.firstinspires.ftc.teamcode.classes.ProfileChain;
 import org.firstinspires.ftc.teamcode.classes.Robot;
 import org.firstinspires.ftc.teamcode.classes.ValueStorage;
 
-@TeleOp(name = "TeleOpRedBlueTwoDriver")
-public class TeleOpRedBlueTwoDriver extends LinearOpMode {
+@TeleOp(name = "TeleOpRedBlueTwoDriverOpti")
+public class TeleOpRedBlueTwoDriverOpti extends LinearOpMode {
 
     public static final double INTAKE_REVERSE_POWER = -0.75;
     Robot robot = new Robot();
@@ -71,6 +70,7 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
     boolean lbReleased = false;
     boolean rbPressed = false;
     boolean rbReleased = false;
+    String elevatorButtonLatched = null;
     ElapsedTime clock = new ElapsedTime();
     boolean secondHalf = false;                 // Use to prevent multiple half-time warning rumbles.
 
@@ -151,13 +151,13 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                 case 1:
                     if (time > stateTime) {
                         robot.setIntakePowers(0, 0);
-                        if (aPressed) {
+                        if ("a".equals(elevatorButtonLatched)) {
                             state = 2;
                             robot.extendLiftProfile(time, liftLowClose[0], 0);
                             robot.extendArmProfile(time, liftLowClose[1], 0);
                             robot.extendWristProfile(time, liftLowClose[2], 0);
                             stateTime = robot.restTime();
-                        } else if (bPressed) {
+                        } else if ("b".equals(elevatorButtonLatched)) {
                             state = 2;
                             robot.extendLiftProfile(time, liftMedClose[0], 0);
                             robot.extendArmProfile(time, liftMedClose[1], 0);
@@ -169,13 +169,13 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                             robot.extendArmProfile(time, liftHighFar[1], 0);
                             robot.extendWristProfile(time, liftHighFar[2], 0);
                             stateTime = robot.restTime();
-                        } else if (yPressed) {
+                        } else if ("y".equals(elevatorButtonLatched)) {
                             state = 2;
                             robot.extendLiftProfile(time, liftHighClose[0], 0);
                             robot.extendArmProfile(time, liftHighClose[1], 0);
                             robot.extendWristProfile(time, liftHighClose[2], 0);
                             stateTime = robot.restTime();
-                        } else if (xPressed) {
+                        } else if ("X".equals(elevatorButtonLatched)) {
                             state = 2;
                             robot.extendLiftProfile(time, liftGroundClose[0], 0);
                             robot.extendArmProfile(time, liftGroundClose[1], 0);
@@ -242,12 +242,14 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                     } */
                     break;
                 case 2:
-                    if (time < stateTime) {} else if (aPressed) {
+                    if (time < stateTime) {
+
+                    } else if ("a".equals(elevatorButtonLatched)) {
                         robot.extendLiftProfile(time, liftLowClose[0], 0);
                         robot.extendArmProfile(time, liftLowClose[1], 0);
                         robot.extendWristProfile(time, liftLowClose[2], 0);
                         stateTime = robot.restTime();
-                    } else if (bPressed) {
+                    } else if ("b".equals(elevatorButtonLatched)) {
                         robot.extendLiftProfile(time, liftMedClose[0], 0);
                         robot.extendArmProfile(time, liftMedClose[1], 0);
                         robot.extendWristProfile(time, liftMedClose[2], 0);
@@ -257,17 +259,19 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
                         robot.extendArmProfile(time, liftHighFar[1], 0);
                         robot.extendWristProfile(time, liftHighFar[2], 0);
                         stateTime = robot.restTime();
-                    } else if (yPressed) {
+                    } else if ("y".equals(elevatorButtonLatched)) {
                         robot.extendLiftProfile(time, liftHighClose[0], 0);
                         robot.extendArmProfile(time, liftHighClose[1], 0);
                         robot.extendWristProfile(time, liftHighClose[2], 0);
                         stateTime = robot.restTime();
-                    } else if (xPressed) {
+                    } else if ("x".equals(elevatorButtonLatched)) {
                         robot.extendLiftProfile(time, liftGroundClose[0], 0);
                         robot.extendArmProfile(time, liftGroundClose[1], 0);
                         robot.extendWristProfile(time, liftGroundClose[2], 0);
                         stateTime = robot.restTime();
-                    } else if (rbPressed) {
+                    }
+                    if (rbPressed) {
+                       elevatorButtonLatched = null;
                         state = 3;
                         stateDir = true;
                         stateTime = 0.5;
@@ -345,12 +349,14 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
     private void readGamePad() {
         if (gamepad1.a) {
             aPressed = aReleased;
+            elevatorButtonLatched = "a";
             aReleased = false;
         } else {
             aPressed = false;
             aReleased = true;
         }
         if (gamepad1.b) {
+            elevatorButtonLatched = "b";
             bPressed = bReleased;
             bReleased = false;
         } else {
@@ -358,6 +364,7 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
             bReleased = true;
         }
         if (gamepad1.x) {
+            elevatorButtonLatched = "x";
             xPressed = xReleased;
             xReleased = false;
         } else {
@@ -365,6 +372,7 @@ public class TeleOpRedBlueTwoDriver extends LinearOpMode {
             xReleased = true;
         }
         if (gamepad1.y) {
+            elevatorButtonLatched = "y";
             yPressed = yReleased;
             yReleased = false;
         } else {
