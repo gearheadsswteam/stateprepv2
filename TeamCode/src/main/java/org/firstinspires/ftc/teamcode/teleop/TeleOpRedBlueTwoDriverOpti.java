@@ -46,7 +46,7 @@ import org.firstinspires.ftc.teamcode.classes.ValueStorage;
 @TeleOp(name = "TeleOpRedBlueTwoDriverOpti")
 public class TeleOpRedBlueTwoDriverOpti extends LinearOpMode {
 
-    public static final double INTAKE_REVERSE_POWER = -0.75;
+    public static final double INTAKE_REVERSE_POWER = -0.9;
     Robot robot = new Robot();
     int state = 0;
     int holderDetectionCount = 0;

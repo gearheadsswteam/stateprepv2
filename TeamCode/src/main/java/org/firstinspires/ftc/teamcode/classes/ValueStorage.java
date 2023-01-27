@@ -12,7 +12,7 @@ public class ValueStorage {
     public static double rollerRetract = 0.25;
     public static double gripperHold = 0.48;
     public static double gripperRelease = 0.43;
-    public static double armRest = 0.10;
+    public static double armRest = 0.0;
     public static double armUp = 0.53;
     public static double armIn = 0.41;
     public static double wristRest = 0.57;
@@ -36,7 +36,7 @@ public class ValueStorage {
     public static double[] liftGroundClose = {0, 0.90, 0.20};
     public static double[] liftPickup = {0, 0.96, 0.20};
     public static final double INTAKE_POWER_AUTO = 0.7;
-    public static final double INTAKE_POWER_TELEOP = 0.65;
+    public static final double INTAKE_POWER_TELEOP = 0.8;
     public static double[] adjust(double liftPos, double increment) {
         double weight;
         double groundInterval = 0.2;
@@ -83,7 +83,7 @@ public class ValueStorage {
         return new ProfileChain(new TrapezoidalProfile(armMaxVel, armMaxAccel, t, armIn, 0, armRest, 0));
     }
     public static ProfileChain forwardWristProfile2(double t) {
-        return new ProfileChain(new TrapezoidalProfile(wristMaxVel, wristMaxAccel, t + 0.3, wristIn, 0, wristRest, 0));
+        return new ProfileChain(new TrapezoidalProfile(wristMaxVel, wristMaxAccel, t + 0.5, wristIn, 0, wristRest, 0));
     }
     public static ProfileChain autonomousArmProfile(double t) {
         return new ProfileChain(new TrapezoidalProfile(armMaxVel, armMaxAccel, t, armIn, 0, armUp, 0));
