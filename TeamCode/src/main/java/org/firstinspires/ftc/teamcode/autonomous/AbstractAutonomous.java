@@ -9,14 +9,14 @@ import org.firstinspires.ftc.teamcode.classes.SignalDetector;
 public abstract class AbstractAutonomous extends LinearOpMode {
     public Robot robot = new Robot();
     SignalDetector detector;
-    int runCase = 2;
-    int caseDetected = 2;
+    int runCase = 1;
+    int caseDetected = 1;
     int caseDetectionLength = 0;
     ElapsedTime clock = new ElapsedTime();
     double time;
     @Override
     public void runOpMode() {
-        robot.init(hardwareMap, armIn, wristIn);
+        robot.init(hardwareMap, armIn, wristInAutoInitPos);
         robot.gripper.setPosition(gripperHold);
         robot.retract.setPosition(odoDown);
         robot.roller.setPosition(rollerRetract);

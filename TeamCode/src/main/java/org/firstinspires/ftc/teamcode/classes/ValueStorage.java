@@ -18,11 +18,12 @@ public class ValueStorage {
     public static double wristRest = 0.57;
     public static double wristUp = 0.11;
     public static double wristIn = 0.42;
+    public static double wristInAutoInitPos = 0.29;
     public static double armOffset = 1.01;
     public static double wristOffset = 1.10;
-    public static double liftMaxAccel = 10000; //3000
-    public static double liftMaxVel = 7000;  //1400
-    public static double liftKp = 0.05;
+    public static double liftMaxAccel = 3000; //3000
+    public static double liftMaxVel = 1400;  //1400
+    public static double liftKp = 0.07;
     public static double liftKi = 0;
     public static double liftKd = 0;
     public static double armMaxVel = 0.65;
@@ -35,7 +36,7 @@ public class ValueStorage {
     public static double[] liftHighFar = {1100, 0.70, wristUp};
     public static double[] liftGroundClose = {0, 0.90, 0.20};
     public static double[] liftPickup = {0, 0.96, 0.20};
-    public static final double INTAKE_POWER_AUTO = 0.7;
+    public static final double INTAKE_POWER_AUTO = 0.8;
     public static final double INTAKE_POWER_TELEOP = 0.8;
     public static double[] adjust(double liftPos, double increment) {
         double weight;
